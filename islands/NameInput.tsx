@@ -14,7 +14,7 @@ export default function NameInput() {
       <input
         type="text"
         value={name}
-        onChange={inputHandler}
+        onInput={inputHandler}
         class="border p-1"
       />
       <button type="submit" class="ml-1 px-2 py-1 bg-gray-100 border">
