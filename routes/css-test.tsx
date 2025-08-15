@@ -13,7 +13,7 @@ const elements = stuff.map((thing) => (
 ));
 export default function Page() {
   return (
-    <div class="bg-brand px-[78px] text-[--color-fresh]">
+    <div class="card">
       Dark mode disabled!
     </div>
   );

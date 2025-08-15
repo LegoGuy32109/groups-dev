@@ -9,4 +9,11 @@ body {
 
 @theme {
   --tw-breakpoint-mobile: 425px;
+  --color-fresh: #86efac;
+}
+
+@layer utilities {
+  .card {
+    @apply m-10 rounded-lg bg-white
+  }
 }
