@@ -7,13 +7,15 @@ import * as $_app from "./routes/_app.tsx";
 import * as $about from "./routes/about.tsx";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $countdown from "./routes/countdown.tsx";
-import * as $css_test from "./routes/css-test.tsx";
+import * as $css_nike from "./routes/css/nike.tsx";
+import * as $css_test from "./routes/css/test.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $greet_index from "./routes/greet/index.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $search from "./routes/search.tsx";
 import * as $Countdown from "./islands/Countdown.tsx";
 import * as $Counter from "./islands/Counter.tsx";
+import * as $GroupOverview from "./islands/GroupOverview.tsx";
 import * as $NameInput from "./islands/NameInput.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -24,7 +26,8 @@ const manifest = {
     "./routes/about.tsx": $about,
     "./routes/api/joke.ts": $api_joke,
     "./routes/countdown.tsx": $countdown,
-    "./routes/css-test.tsx": $css_test,
+    "./routes/css/nike.tsx": $css_nike,
+    "./routes/css/test.tsx": $css_test,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/greet/index.tsx": $greet_index,
     "./routes/index.tsx": $index,
@@ -33,6 +36,7 @@ const manifest = {
   islands: {
     "./islands/Countdown.tsx": $Countdown,
     "./islands/Counter.tsx": $Counter,
+    "./islands/GroupOverview.tsx": $GroupOverview,
     "./islands/NameInput.tsx": $NameInput,
   },
   baseUrl: import.meta.url,

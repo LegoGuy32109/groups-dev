@@ -1,24 +1,31 @@
-import { useSignal } from "@preact/signals";
-import Counter from "../islands/Counter.tsx";
+import GroupOverview from "../islands/GroupOverview.tsx";
 
 export default function Home() {
-  const count = useSignal(3);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const dateTonight = now.toISOString().split("T")[0].substring(5).replaceAll(
+    "-",
+    "/",
+  );
   return (
-    <div class="px-4 py-8 mx-auto bg-[#86efac]">
+    <div class="w-full h-screen bg-sky-950">
       <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
-        <img
-          class="my-6"
-          src="/logo.svg"
-          width="128"
-          height="128"
-          alt="the Fresh logo: a sliced lemon dripping with juice"
-        />
-        <h1 class="text-4xl font-bold">Welcome to Fresh</h1>
-        <p class="my-4">
-          Try updating this message in the
-          <code class="mx-2">./routes/index.tsx</code> file, and refresh.
-        </p>
-        <Counter count={count} />
+        <span class="text-slate-200 text-lg my-4">
+          Attendance for {dateTonight}:{" "}
+          <span class="font-bold text-3xl">102</span>
+        </span>
+        <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2">
+          <GroupOverview group="Senior Boys" count={33} />
+          <GroupOverview group="Senior Girls" count={3} />
+          <GroupOverview group="Junior Boys" count={0} />
+          <GroupOverview group="Junior Girls" count={10} />
+          <GroupOverview group="Sophomore Boys" count={28} />
+          <GroupOverview group="Sophomore Girls" count={1} />
+          <GroupOverview group="Freshman Boys" count={13} />
+          <GroupOverview group="Freshman Girls" count={17} />
+          <GroupOverview group="JuniorHigh Boys" count={0} />
+          <GroupOverview group="JuniorHigh Girls" count={0} />
+        </div>
       </div>
     </div>
   );
