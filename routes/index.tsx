@@ -12,7 +12,7 @@ export default function Home() {
       <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
         <span class="text-slate-200 text-lg my-4">
           Attendance for {dateTonight}:{" "}
-          <span class="font-bold text-3xl">102</span>
+          <span class="font-bold text-3xl font-mono ml-2">102</span>
         </span>
         <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2">
           <GroupOverview group="Senior Boys" count={33} />
