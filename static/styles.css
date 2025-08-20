@@ -24,7 +24,10 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  & span {
-    color: white
-  }
+}
+.quoteGradient span {
+  background: linear-gradient(90deg, #ff9f8f, #ffdf9f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

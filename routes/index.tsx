@@ -72,13 +72,14 @@ export default function Home({ data }: PageProps<Data>) {
       <LoginOutButton loggedIn={false} />
       <div class="mt-16 mx-2 gap-y-2 flex flex-col">
         <h1 class="text-2xl font-semibold p-1 quoteGradient">
-          I will heal your broken heart, |name|, and mend all your wounds.
+          I will heal your broken heart,{" "}
+          <span>Josh</span>, and mend all your wounds.
         </h1>
         <a
           class="text-slate-300 rounded-md bg-slate-900/60 font-extralight
          py-1 px-3 w-min whitespace-nowrap"
           //href={`https://www.bible.com/bible/1713/psa.146.3`}
-          href={`youversion://bible?reference=Psalm+147:3`}
+          href={`youversion://bible?reference=Psalm+147:3&version_id=1713`}
         >
           Psalm 147:3
         </a>
