@@ -18,3 +18,10 @@ body {
     @apply absolute right-4 top-2 text-2xl font-light rounded-lg p-3
   }
 }
+
+.quoteGradient {
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

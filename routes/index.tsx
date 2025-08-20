@@ -70,7 +70,18 @@ export default function Home({ data }: PageProps<Data>) {
   return (
     <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center overflow-auto">
       <LoginOutButton loggedIn={false} />
-      <div class="py-16" />
+      <div class="mt-16 mx-2 gap-y-2 flex flex-col">
+        <h1 class="text-2xl font-semibold p-1 quoteGradient">
+          I will heal your broken heart, |name|, and mend all your wounds.
+        </h1>
+        <a
+          class="text-slate-300 rounded-md bg-slate-900/60 font-extralight
+         py-1 px-3 w-min whitespace-nowrap"
+          href={`https://www.bible.com/bible/1713/psa.147.3`}
+        >
+          Psalm 147:3
+        </a>
+      </div>
       <span class="text-slate-200 text-lg my-4">
         Attendance for {dateTonight}:
         <span class="font-bold text-3xl font-mono ml-2">102</span>
