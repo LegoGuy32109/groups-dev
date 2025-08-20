@@ -110,7 +110,7 @@ export const PERSONAL_VERSES: Array<PersonalVerseData> = [
     chapter: 147,
     verses: [3],
     urls: {
-      [BibleTranslation.CSB]: "https://www.bible.com/bible/1713/PSA.147.3.CSB",
+      [BibleTranslation.CSB]: "https://www.bible.com/bible/1713/PSA.147_1.3.CSB",
       [BibleTranslation.NIV]: "https://www.bible.com/bible/111/PSA.147.3.NIV",
     },
   },
