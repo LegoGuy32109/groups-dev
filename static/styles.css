@@ -1,16 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "tailwindcss";
 
 body {
   --color-fresh: #86efac;
 }
 
 @layer base {
-  h1 {
-    @apply text-base font-medium tracking-tight text-slate-900;
-  }
 }
 
 @theme {
@@ -18,31 +14,7 @@ body {
 }
 
 @layer components {
-  .padding {
-    @apply sm:px-16 px-8 sm:py-24 py-12;
-  }
-  .padding-t {
-    @apply sm:pt-24 pt-12;
-  }
-  .card {
-    @apply m-10 rounded-lg bg-gray-400;
-  }
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-  .sidebar-icon {
-    @apply relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto
-      shadow-lg text-3xl bg-gray-800 text-green-500 hover:bg-green-700
-      hover:text-white rounded-3xl hover:rounded-xl transition-all duration-300
-      ease-linear cursor-pointer select-none;
-  }
-  .sidebar-tooltip {
-    @apply absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md
-      text-white bg-gray-900 text-xs font-bold transition-all scale-0
-      duration-300 origin-left;
-  }
-  .max-container {
-    max-width: 1440px;
-    margin: 0 auto;
+  .loginOutButton {
+    @apply absolute right-4 top-2 text-2xl font-light rounded-lg p-3
   }
 }

@@ -6,9 +6,8 @@ import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $about from "./routes/about.tsx";
 import * as $api_joke from "./routes/api/joke.ts";
+import * as $api_login from "./routes/api/login.tsx";
 import * as $countdown from "./routes/countdown.tsx";
-import * as $css_nike from "./routes/css/nike.tsx";
-import * as $css_test from "./routes/css/test.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $greet_index from "./routes/greet/index.tsx";
 import * as $index from "./routes/index.tsx";
@@ -25,9 +24,8 @@ const manifest = {
     "./routes/_app.tsx": $_app,
     "./routes/about.tsx": $about,
     "./routes/api/joke.ts": $api_joke,
+    "./routes/api/login.tsx": $api_login,
     "./routes/countdown.tsx": $countdown,
-    "./routes/css/nike.tsx": $css_nike,
-    "./routes/css/test.tsx": $css_test,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/greet/index.tsx": $greet_index,
     "./routes/index.tsx": $index,

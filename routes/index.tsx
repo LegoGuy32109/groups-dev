@@ -1,6 +1,7 @@
 import GroupOverview from "../islands/GroupOverview.tsx";
 import { getCookies } from "$std/http/cookie.ts";
 import { Handlers, PageProps } from "$fresh/server.ts";
+import { Dates } from "../utilities/dates.ts";
 
 interface Data {
   isAllowed: boolean;
@@ -28,8 +29,19 @@ function Login(
   }
   return (
     <form class={classString} method="post" action="/api/login">
-      <input type="text" name="username" />
-      <input type="password" name="password" />
+      <label>
+        Username:{" "}
+        <input type="text" name="username" autocomplete="username" required />
+      </label>
+      <label>
+        Password:{" "}
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+        />
+      </label>
       <button
         type="submit"
         class="rounded-full bg-sky-500 hover:bg-sky-400 text-slate-200 m-1 p-2 font-bold text-xs"
@@ -39,36 +51,41 @@ function Login(
     </form>
   );
 }
-export default function Home({ data }: PageProps<Data>) {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const dateTonight = now.toISOString().split("T")[0].substring(5).replaceAll(
-    "-",
-    "/",
-  );
+function LoginOutButton({ loggedIn }: { loggedIn: boolean }) {
+  if (loggedIn) {
+    return (
+      <div class="loginOutButton bg-slate-700/50  text-slate-400">
+        <a href="/api/logout">Logout</a>
+      </div>
+    );
+  }
   return (
-    <div class="w-full h-screen bg-sky-950">
-      <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
-        <div class="text-slate-200">
-          You currently {data.isAllowed ? "are" : "are not"} logged in.
-          <Login visible={!data.isAllowed} class="text-zinc-500" />
-        </div>
-        <span class="text-slate-200 text-lg my-4">
-          Attendance for {dateTonight}:{" "}
-          <span class="font-bold text-3xl font-mono ml-2">102</span>
-        </span>
-        <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2">
-          <GroupOverview group="Senior Boys" count={33} />
-          <GroupOverview group="Senior Girls" count={3} />
-          <GroupOverview group="Junior Boys" count={0} />
-          <GroupOverview group="Junior Girls" count={10} />
-          <GroupOverview group="Sophomore Boys" count={28} />
-          <GroupOverview group="Sophomore Girls" count={1} />
-          <GroupOverview group="Freshman Boys" count={13} />
-          <GroupOverview group="Freshman Girls" count={17} />
-          <GroupOverview group="JuniorHigh Boys" count={0} />
-          <GroupOverview group="JuniorHigh Girls" count={0} />
-        </div>
+    <div class="loginOutButton bg-slate-600 text-slate-100 ">
+      <a href="/login">Login</a>
+    </div>
+  );
+}
+export default function Home({ data }: PageProps<Data>) {
+  const dateTonight = Dates.getMonthDay();
+  return (
+    <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center overflow-auto">
+      <LoginOutButton loggedIn={false} />
+      <div class="py-16" />
+      <span class="text-slate-200 text-lg my-4">
+        Attendance for {dateTonight}:
+        <span class="font-bold text-3xl font-mono ml-2">102</span>
+      </span>
+      <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2 mb-4">
+        <GroupOverview group="Senior Boys" count={33} />
+        <GroupOverview group="Senior Girls" count={3} />
+        <GroupOverview group="Junior Boys" count={0} />
+        <GroupOverview group="Junior Girls" count={10} />
+        <GroupOverview group="Sophomore Boys" count={28} />
+        <GroupOverview group="Sophomore Girls" count={1} />
+        <GroupOverview group="Freshman Boys" count={13} />
+        <GroupOverview group="Freshman Girls" count={17} />
+        <GroupOverview group="JuniorHigh Boys" count={0} />
+        <GroupOverview group="JuniorHigh Girls" count={0} />
       </div>
     </div>
   );
