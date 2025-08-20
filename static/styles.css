@@ -20,7 +20,7 @@ body {
 }
 
 .quoteGradient {
-  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  background: linear-gradient(90deg, #ff6e5f, #ffc47b);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
