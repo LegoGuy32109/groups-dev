@@ -77,7 +77,8 @@ export default function Home({ data }: PageProps<Data>) {
         <a
           class="text-slate-300 rounded-md bg-slate-900/60 font-extralight
          py-1 px-3 w-min whitespace-nowrap"
-          href={`https://www.bible.com/bible/1713/psa.147.3`}
+          //href={`https://www.bible.com/bible/1713/psa.146.3`}
+          href={`youversion://bible?reference=Psalm+147:3`}
         >
           Psalm 147:3
         </a>
