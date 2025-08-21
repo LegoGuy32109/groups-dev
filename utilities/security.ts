@@ -74,7 +74,7 @@ export async function signup(username: string, password: string) {
     iterations: HASHING_ITERATIONS,
     saltB64: toBase64(salt),
     hashB64: toBase64(derivedKey),
-    createdAt: nowIso,
+    createdOn: nowIso,
   };
 
   const userProfileRecord = {
@@ -104,4 +104,6 @@ export async function signup(username: string, password: string) {
       errors: ["User was created concurrently. Try again."],
     };
   }
+
+  return { success: true };
 }
