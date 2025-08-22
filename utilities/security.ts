@@ -1,12 +1,36 @@
+import { Db } from "./Database.ts";
 import { Dates } from "./dates.ts";
+
+export interface Profile {
+  username: string;
+  displayName: string;
+  createdOn: string; // iso
+  updatedOn: string; // iso
+}
+
+export interface Authentication {
+  algo: string;
+  iterations: number;
+  saltB64: string;
+  hashB64: string;
+  createdOn: string; // iso
+}
+
+export type AsyncResult<T> = Promise<Result<T>>;
+export type Result<T> =
+  | { success: true } & T
+  | {
+    success: false;
+    errors: Array<string>;
+  };
 
 const HASHING_ITERATIONS = 100_000;
 
-function toBase64(u8: Uint8Array): string {
+export function toBase64(u8: Uint8Array): string {
   return btoa(String.fromCharCode(...u8));
 }
 
-function fromBase64(b64: string): Uint8Array {
+export function fromBase64(b64: string): Uint8Array {
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) {
@@ -15,7 +39,7 @@ function fromBase64(b64: string): Uint8Array {
   return out;
 }
 
-function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
+export function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
     if (a[i] !== b[i]) return false;
@@ -23,10 +47,10 @@ function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
   return true;
 }
 
-async function getPbkdf2Hash(
+export async function getPbkdf2Hash(
   password: string,
   salt: Uint8Array,
-  iterations: number,
+  iterations = HASHING_ITERATIONS,
 ): Promise<Uint8Array> {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
@@ -51,8 +75,11 @@ async function getPbkdf2Hash(
   return new Uint8Array(derivedBits);
 }
 
-export async function signup(username: string, password: string) {
-  const kv = await Deno.openKv();
+export async function signup(
+  username: string,
+  password: string,
+): AsyncResult<{ userId: string }> {
+  const kv = await Db.kv();
 
   const usernameKey = ["usernames", username];
   const { value: existingId } = await kv.get(usernameKey);
@@ -65,11 +92,11 @@ export async function signup(username: string, password: string) {
   // generate 16 bits of salt
   const salt = crypto.getRandomValues(new Uint8Array(16));
 
-  const derivedKey = await getPbkdf2Hash(password, salt, HASHING_ITERATIONS);
+  const derivedKey = await getPbkdf2Hash(password, salt);
 
   const nowIso = Dates.getNowIso();
 
-  const userAuthRecord = {
+  const userAuthRecord: Authentication = {
     algo: "PBKDF2-SHA256",
     iterations: HASHING_ITERATIONS,
     saltB64: toBase64(salt),
@@ -77,7 +104,7 @@ export async function signup(username: string, password: string) {
     createdOn: nowIso,
   };
 
-  const userProfileRecord = {
+  const userProfileRecord: Profile = {
     username,
     displayName: username,
     createdOn: nowIso,
@@ -105,5 +132,5 @@ export async function signup(username: string, password: string) {
     };
   }
 
-  return { success: true };
+  return { success: true, userId: newUserId };
 }
