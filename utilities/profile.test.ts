@@ -1,47 +1,23 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { Db } from "../utilities/Database.ts";
-import { signup } from "../utilities/security.ts";
+import {
+  Authentication,
+  login,
+  Profile,
+  signup,
+} from "../utilities/security.ts";
 import { Errors } from "../utilities/Errors.ts";
+import { Test } from "./Test.ts";
 Deno.test({
-  name: "signing up creates a user",
-  async fn() {
-    // give us a clean slate to test
-    await Db.configure({ test: true });
-    const username = "josh";
-    const password = "hale";
+  name: "signing up creates a user and user can be delted",
+  fn: Test.runInTempDb(async () => {
+    const username = "testUser";
+    const password = "some!c🤔mpl33#x+@ssword```~";
     const signupResult = Errors.checkResult(
       await signup(username, password),
       "sign up not successful",
     );
-    // check userId is guid
-    const parts = signupResult.userId.split("-");
-    assertEquals(parts.length, 5, "id not comprised of 4 dashes '-'");
-    const [p1, p2, p3, p4, p5] = parts;
-    assertEquals(
-      p1.length,
-      8,
-      `part 1 of id not 8 characters long, got: ${p1}`,
-    );
-    assertEquals(
-      p2.length,
-      4,
-      `part 2 of id not 4 characters long, got: ${p2}`,
-    );
-    assertEquals(
-      p3.length,
-      4,
-      `part 3 of id not 4 characters long, got: ${p3}`,
-    );
-    assertEquals(
-      p4.length,
-      4,
-      `part 4 of id not 4 characters long, got: ${p4}`,
-    );
-    assertEquals(
-      p5.length,
-      12,
-      `part 5 of id not 12 characters long, got: ${p5}`,
-    );
+    Test.guid(signupResult.userId);
     // check username is in username table
     const userIdResult = Errors.checkResult(
       await Db.getUserId(username),
@@ -62,7 +38,71 @@ Deno.test({
       username,
       "profile username is not equal to given username for signup",
     );
-    // close database at end of test
-    Db.close();
-  },
+    // check if deleting user works
+    const deleteResult = Errors.checkResult(
+      await Db.deleteUser(userIdResult.userId),
+      "failed to delete user",
+    );
+    assertEquals(
+      deleteResult.deletedRecords.length,
+      3,
+      "authenticaion, profile, and username row should have been deleted",
+    );
+    assertEquals<Authentication>(
+      userResult.authentication,
+      (deleteResult.deletedRecords[0] as Deno.KvEntry<Authentication>).value,
+      "authentication record does match what was deleted",
+    );
+    assertEquals<Profile>(
+      userResult.profile,
+      (deleteResult.deletedRecords[1] as Deno.KvEntry<Profile>).value,
+      "profile record does match what was deleted",
+    );
+    assertEquals<string>(
+      userIdResult.userId,
+      (deleteResult.deletedRecords[2] as Deno.KvEntry<string>).value,
+      "deleted username id does not match user id",
+    );
+  }),
+});
+Deno.test({
+  name: "can sign up user and login with password",
+  fn: Test.runInTempDb(async () => {
+    const username = "testUser";
+    const password = "some!c🤔mpl33#x+@ssword```~";
+    const { userId } = Errors.checkResult(
+      await signup(username, password),
+      "sign up not successful",
+    );
+    // attempt to login after creating profile
+    const { sessionId } = Errors.checkResult(
+      await login(username, password),
+      "login not successful",
+    );
+    // got session id logging in
+    Test.guid(sessionId);
+    // session is in db
+    Errors.checkResult(
+      await Db.getSession(sessionId),
+      "Session was not in db",
+    );
+    // one session is associated with the user
+    const { sessions } = Errors.checkResult(
+      await Db.getUserSessions(userId),
+      "failed to get sessions for user",
+    );
+    assertEquals(sessions.length, 1);
+    // signing in again has two sessions
+    Errors.checkResult(
+      await login(username, password),
+      "second login not successful",
+    );
+    const { sessions: sessions2 } = Errors.checkResult(
+      await Db.getUserSessions(userId),
+      "failed to get sessions for user the second time",
+    );
+    assertEquals(sessions2.length, 2);
+    // first session matches in both session results
+    assertEquals(sessions[0], sessions2[0]);
+  }),
 });

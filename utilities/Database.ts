@@ -1,4 +1,5 @@
-import { AsyncResult, Authentication, Profile } from "./security.ts";
+import { Errors } from "./Errors.ts";
+import { AsyncResult, Authentication, Profile, Session } from "./security.ts";
 interface DbOptions {
   test?: boolean;
   path?: string;
@@ -6,19 +7,25 @@ interface DbOptions {
 export class Db {
   private static _kv: Deno.Kv | null = null;
   /**
-  * Closes current connection and created one with given options
-  */
+   * Closes current connection and created one with given options
+   */
   static async configure(options: DbOptions = {}) {
     Db.close();
     Db._kv = await Deno.openKv(options.test ? ":memory:" : options.path);
   }
   /**
-  * Will need to be reconfigured after close
-  */
+   * Will need to be reconfigured after close
+   */
   static close() {
     if (Db._kv) Db._kv.close();
     Db._kv = null;
   }
+  /**
+   * Get a kv instance from Db singleton
+   * Might have configuration already applied
+   *
+   * Note: see `Db.configure()`
+   */
   static async kv(): Promise<Deno.Kv> {
     if (Db._kv) {
       return Db._kv;
@@ -42,7 +49,7 @@ export class Db {
     const kv = await Db.kv();
     const userId = (await kv.get<string>(["usernames", username])).value;
     if (!userId) {
-      return { success: false, errors: [`No userId found for ${username}`] };
+      return Errors.make(`No userId found for ${username}`);
     }
     return { success: true, userId };
   }
@@ -66,36 +73,119 @@ export class Db {
     }
     return { success: true, profile: userProfile, authentication: userAuth };
   }
-  static async deleteUser(userId: string) {
+  static async deleteUser(
+    userId: string,
+  ): AsyncResult<{ deletedRecords: unknown[] }> {
     const kv = await Db.kv();
     const userRecords = await Array.fromAsync(
       kv.list({ prefix: ["users", userId] }),
     );
+    const userRecordKeys = userRecords.map((record) => record.key);
     const userProfile = userRecords.find((record) =>
       record.key.at(-1) === "profile"
-    )?.value as Profile;
+    );
+    const { value: profile } = userProfile as Deno.KvEntry<Profile>;
     if (!userProfile) {
-      return {
-        success: false,
-        errors: [`User 'profile' record did not exist for '${userId}'`],
-      };
+      return Errors.make(`User 'profile' record did not exist for '${userId}'`);
+    }
+    // delete every row found for user id
+    const deleteTransaction = kv.atomic();
+    for (const key of userRecordKeys) {
+      deleteTransaction.delete(key);
     }
     // delete username in username lookup table
-    const username = userProfile.username;
-    const deleteResponse = await kv.atomic()
-      .delete(["usernames", username])
-      .delete(["users", userId, "auth"])
-      .delete(["users", userId, "profile"])
+    const username = profile.username;
+    const usernameKey = ["usernames", username];
+    // get username record to indicate what was deleted
+    const usernameRecord = await kv.get(usernameKey);
+    // if no username record existed, don't halt execution but note it should have been there
+    if (!usernameRecord.value) {
+      console.error(`failed to find username row for ${usernameKey}`);
+    }
+    const deleteResponse = await deleteTransaction
+      .delete(usernameKey)
       .commit();
     if (!deleteResponse.ok) {
-      return {
-        success: false,
-        errors: [
-          `Failed to delete both username '${username}' and userId '${userId}' from database.`,
-        ],
-      };
+      return Errors.make(
+        `Failed to delete both username '${username}' and userId '${userId}' from database.`,
+      );
+    }
+    return {
+      success: true,
+      deletedRecords: [...userRecords, usernameRecord],
+    };
+  }
+  /**
+   * Add user login session to the database
+   * 1) [users, userId, sessions] => array of sessionIds
+   * 2) [sessions, sessionId] => Session
+   */
+  static async addNewSession(sessionId: string, session: Session): AsyncResult {
+    const kv = await Db.kv();
+    const { userId } = session;
+    const userSessionsKey = ["users", userId, "sessions"];
+    const userSessions = (await kv.get<Array<string>>(userSessionsKey)).value ??
+      [];
+    // modify sessions appending to existing sessions
+    userSessions.push(sessionId);
+    const addSessionResult = await kv.atomic()
+      .set(userSessionsKey, userSessions)
+      .set(["sessions", sessionId], session)
+      .commit();
+    if (!addSessionResult.ok) {
+      return Errors.make(
+        `Failed to add session to database, ${sessionId}: ${session}`,
+      );
     }
     return { success: true };
+  }
+  static async getSession(
+    sessionId: string,
+  ): AsyncResult<{ session: Session }> {
+    const kv = await Db.kv();
+    const { value: session } = await kv.get<Session>(["sessions", sessionId]);
+    if (!session) {
+      return Errors.make(`No session found with id '${sessionId}'`);
+    }
+    return { success: true, session };
+  }
+  static async getUserSessions(
+    userId: string,
+  ): AsyncResult<{ sessions: Array<Session> }> {
+    const kv = await Db.kv();
+    const { value: sessionIds } = await kv.get<Array<string>>([
+      "users",
+      userId,
+      "sessions",
+    ]);
+    if (!sessionIds) {
+      return Errors.make(`Failed to find sessions for userId: '${userId}'`);
+    }
+    const sessionEntries = await kv.getMany<Array<Session>>(
+      sessionIds.map((id) => ["sessions", id]),
+    );
+    const { sessions, invalidSessions } = sessionEntries.reduce(
+      (acc, sessionEntry) => {
+        if (sessionEntry.value) {
+          acc.sessions.push(sessionEntry.value);
+        } else {
+          acc.invalidSessions.push(sessionEntry.key);
+        }
+        return acc;
+      },
+      {
+        sessions: new Array<Session>(),
+        invalidSessions: new Array<Deno.KvKey>(),
+      },
+    );
+    // if there were, indicate there are invalid sessions,
+    // but that doesn't stop us from returning valid ones
+    if (invalidSessions.length > 0) {
+      console.error(
+        `Invalid sessions in database for user '${userId}'\n${invalidSessions}`,
+      );
+    }
+    return { success: true, sessions };
   }
   static async deleteAllDataInTable(table: string) {
     const kv = await Db.kv();

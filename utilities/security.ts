@@ -1,3 +1,4 @@
+import { UserAgent } from "$std/http/user_agent.ts";
 import { Db } from "./Database.ts";
 import { Dates } from "./dates.ts";
 
@@ -16,13 +17,17 @@ export interface Authentication {
   createdOn: string; // iso
 }
 
-export type AsyncResult<T> = Promise<Result<T>>;
-export type Result<T> =
-  | { success: true } & T
-  | {
-    success: false;
-    errors: Array<string>;
-  };
+export interface Session {
+  userId: string;
+  createdOn: string; // iso
+  updatedOn: string; // iso
+  userAgent?: UserAgent;
+}
+
+export type AsyncResult<T = void> = Promise<Result<T>>;
+export type Result<T = void> = T extends void
+  ? { success: true } | { success: false; errors: Array<string> }
+  : T & { success: true } | { success: false; errors: Array<string> };
 
 const HASHING_ITERATIONS = 100_000;
 
@@ -133,4 +138,56 @@ export async function signup(
   }
 
   return { success: true, userId: newUserId };
+}
+
+export async function login(
+  username: string,
+  password: string,
+  userAgent?: UserAgent,
+): AsyncResult<{ sessionId: string }> {
+  // find user id from username
+  const userIdResult = await Db.getUserId(username);
+  if (!userIdResult.success) {
+    return userIdResult;
+  }
+  const { userId } = userIdResult;
+  // find auth from user id
+  const userResult = await Db.getUser(userId);
+  if (!userResult.success) {
+    return userResult;
+  }
+  const { authentication } = userResult;
+  // hash password with salt from auth record
+  const { saltB64, hashB64 } = authentication;
+  const correctPasswordHash = fromBase64(hashB64);
+  const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
+  // compare given password hash with hash in auth record
+  const isCorrectPassword = timingSafeEqual(
+    correctPasswordHash,
+    givenPasswordHash,
+  );
+  if (!isCorrectPassword) {
+    return {
+      success: false,
+      errors: [`incorrect password for user '${username}'`],
+    };
+  }
+  // if hashes match create a new session, it's id will be the auth cookie
+  const newSessionId = crypto.randomUUID();
+  const nowIso = Dates.getNowIso();
+  const newSessionRecord: Session = {
+    userId,
+    createdOn: nowIso,
+    updatedOn: nowIso,
+    userAgent,
+  };
+  const addSessionResult = await Db.addNewSession(
+    newSessionId,
+    newSessionRecord,
+  );
+  if (!addSessionResult.success) {
+    return addSessionResult;
+  }
+  // return cookie for response in other function
+  return { success: true, sessionId: newSessionId };
 }

@@ -1,5 +1,15 @@
 import { useSignal } from "@preact/signals";
+import { Handlers } from "$fresh/server.ts";
 import { JSX } from "preact/jsx-runtime";
+import { UserAgent } from "$std/http/mod.ts";
+export const handler: Handlers = {
+  GET(req, ctx) {
+    const uaString = req.headers.get("user-agent");
+    const userAgent = new UserAgent(uaString);
+    console.log(userAgent);
+    return ctx.render();
+  },
+};
 export default function BotTest() {
   const message = useSignal("");
   function handleInput(event: JSX.TargetedInputEvent<HTMLInputElement>) {
