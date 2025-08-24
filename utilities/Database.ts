@@ -149,9 +149,9 @@ export class Db {
     }
     return { success: true, session };
   }
-  static async getUserSessions(
+  static async getUserSessionIds(
     userId: string,
-  ): AsyncResult<{ sessions: Array<Session> }> {
+  ): AsyncResult<{ sessionIds: Array<string> }> {
     const kv = await Db.kv();
     const { value: sessionIds } = await kv.get<Array<string>>([
       "users",
@@ -161,6 +161,15 @@ export class Db {
     if (!sessionIds) {
       return Errors.make(`Failed to find sessions for userId: '${userId}'`);
     }
+    return { success: true, sessionIds };
+  }
+  static async getUserSessions(
+    userId: string,
+  ): AsyncResult<{ sessions: Array<Session> }> {
+    const kv = await Db.kv();
+    const sessionIdsResult = await Db.getUserSessionIds(userId);
+    if (!sessionIdsResult.success) return sessionIdsResult;
+    const { sessionIds } = sessionIdsResult;
     const sessionEntries = await kv.getMany<Array<Session>>(
       sessionIds.map((id) => ["sessions", id]),
     );
@@ -186,6 +195,36 @@ export class Db {
       );
     }
     return { success: true, sessions };
+  }
+  static async removeSession(
+    sessionId: string,
+  ): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
+    const kv = await Db.kv();
+    // find user id in session record
+    const sessionResult = await Db.getSession(sessionId);
+    if (!sessionResult.success) return sessionResult;
+    const { session } = sessionResult;
+    const { userId } = session;
+    // get current sessions for user
+    const sessionIdsResult = await Db.getUserSessionIds(userId);
+    if (!sessionIdsResult.success) return sessionIdsResult;
+    const { sessionIds } = sessionIdsResult;
+    // remove given session id
+    const updatedSessionIds = sessionIds.filter((id) => id !== sessionId);
+    const removeSessionResult = await kv.atomic()
+      .set(["users", userId, "sessions"], updatedSessionIds)
+      .delete(["sessions", sessionId])
+      .commit();
+    if (!removeSessionResult.ok) {
+      return Errors.make(
+        `Failed to delete session '${sessionId}' and update user '${userId}' active sessions.`,
+      );
+    }
+    return {
+      success: true,
+      deletedSession: session,
+      userSessionIds: updatedSessionIds,
+    };
   }
   static async deleteAllDataInTable(table: string) {
     const kv = await Db.kv();

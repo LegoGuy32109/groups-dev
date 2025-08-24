@@ -191,3 +191,8 @@ export async function login(
   // return cookie for response in other function
   return { success: true, sessionId: newSessionId };
 }
+export async function logout(
+  sessionId: string,
+): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
+  return await Db.removeSession(sessionId);
+}

@@ -13,45 +13,6 @@ export const handler: Handlers = {
     return ctx.render({ isAllowed: cookies.auth === "bar" });
   },
 };
-function Login(
-  { class: classString, visible }: { class?: string; visible?: boolean },
-) {
-  if (!visible) {
-    return (
-      <form class={classString} method="get" action="/api/logout">
-        <button
-          type="submit"
-          class="rounded-full bg-sky-500 hover:bg-sky-400 text-slate-200 m-1 p-2 font-bold text-xs"
-        >
-          Logout
-        </button>
-      </form>
-    );
-  }
-  return (
-    <form class={classString} method="post" action="/api/login">
-      <label>
-        Username:{" "}
-        <input type="text" name="username" autocomplete="username" required />
-      </label>
-      <label>
-        Password:{" "}
-        <input
-          type="password"
-          name="password"
-          autocomplete="current-password"
-          required
-        />
-      </label>
-      <button
-        type="submit"
-        class="rounded-full bg-sky-500 hover:bg-sky-400 text-slate-200 m-1 p-2 font-bold text-xs"
-      >
-        Submit
-      </button>
-    </form>
-  );
-}
 function LoginOutButton({ loggedIn }: { loggedIn: boolean }) {
   if (loggedIn) {
     return (
