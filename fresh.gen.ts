@@ -8,6 +8,7 @@ import * as $about from "./routes/about.tsx";
 import * as $api_botMessage from "./routes/api/botMessage.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_login from "./routes/api/login.tsx";
+import * as $api_prefill from "./routes/api/prefill.ts";
 import * as $countdown from "./routes/countdown.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $greet_index from "./routes/greet/index.tsx";
@@ -19,6 +20,7 @@ import * as $BotTest from "./islands/BotTest.tsx";
 import * as $Countdown from "./islands/Countdown.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $GroupOverview from "./islands/GroupOverview.tsx";
+import * as $LoginForm from "./islands/LoginForm.tsx";
 import * as $NameInput from "./islands/NameInput.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -30,6 +32,7 @@ const manifest = {
     "./routes/api/botMessage.ts": $api_botMessage,
     "./routes/api/joke.ts": $api_joke,
     "./routes/api/login.tsx": $api_login,
+    "./routes/api/prefill.ts": $api_prefill,
     "./routes/countdown.tsx": $countdown,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/greet/index.tsx": $greet_index,
@@ -43,6 +46,7 @@ const manifest = {
     "./islands/Countdown.tsx": $Countdown,
     "./islands/Counter.tsx": $Counter,
     "./islands/GroupOverview.tsx": $GroupOverview,
+    "./islands/LoginForm.tsx": $LoginForm,
     "./islands/NameInput.tsx": $NameInput,
   },
   baseUrl: import.meta.url,
