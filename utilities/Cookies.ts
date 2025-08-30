@@ -2,14 +2,12 @@ import { Cookie, deleteCookie, getCookies, setCookie } from "$std/http/mod.ts";
 export class Cookies {
   static Error = "e91-students-error";
   static Auth = "e91-students-auth";
-  static clear(response: Response, cookieName: string) {
-    const { headers } = response;
+  static clear(headers: Headers, cookieName: string) {
     deleteCookie(headers, cookieName);
     const set = headers.get("set-cookie");
     if (set) {
       headers.append("set-cookie", set);
     }
-    return response;
   }
   static get(
     requestOrHeaders: Request | Headers,

@@ -7,8 +7,8 @@ export const handler: Handler = async (req, ctx) => {
   const errorMessage = Cookies.get(req, Cookies.Error);
   if (errorMessage) {
     const response = await ctx.render({ error: errorMessage });
-    const clearedResponse = Cookies.clear(response, Cookies.Error);
-    return clearedResponse;
+    Cookies.clear(response.headers, Cookies.Error);
+    return response;
   }
 
   // check if token exists for first time sign-in

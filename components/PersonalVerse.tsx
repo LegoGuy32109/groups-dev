@@ -1,26 +1,17 @@
 import {
   BibleTranslation,
+  getPersonalVerseText,
   getVerseLink,
   getVerseLinkText,
   PERSONAL_VERSES,
-} from "../utilities/inspirationalVerses.ts";
-function getLinkText(template: string, name: string) {
-  const [first, last] = template.split("{name}");
-  return (
-    <>
-      {first}
-      <span>{name}</span>
-      {last}
-    </>
-  );
-}
-export function PersonalVerse({ name = "child" }: { name?: string }) {
+} from "../utilities/inspirationalVerses.tsx";
+export function PersonalVerse({ name }: { name?: string }) {
   const verse =
     PERSONAL_VERSES[Math.floor(Math.random() * PERSONAL_VERSES.length)];
   return (
-    <div class="mt-16 mx-2 gap-y-2 flex flex-col">
+    <div class="mt-16 mb-2 px-8 gap-y-2 flex flex-col">
       <h1 class="text-2xl font-semibold p-1 quoteGradient">
-        {getLinkText(verse.verseTemplate, name)}
+        {getPersonalVerseText(verse.verseTemplate, name)}
       </h1>
       <a
         class="text-slate-300 rounded-md bg-slate-900/60 font-extralight

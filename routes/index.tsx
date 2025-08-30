@@ -1,18 +1,9 @@
 import GroupOverview from "../islands/GroupOverview.tsx";
-import { getCookies } from "$std/http/cookie.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { PageProps } from "$fresh/server.ts";
 import { Dates } from "../utilities/dates.ts";
 import { PersonalVerse } from "../components/PersonalVerse.tsx";
+import { AppState } from "./_middleware.ts";
 
-interface Data {
-  isAllowed: boolean;
-}
-export const handler: Handlers = {
-  GET(req, ctx) {
-    const cookies = getCookies(req.headers);
-    return ctx.render({ isAllowed: cookies.auth === "bar" });
-  },
-};
 function LoginOutButton({ loggedIn }: { loggedIn: boolean }) {
   if (loggedIn) {
     return (
@@ -27,12 +18,12 @@ function LoginOutButton({ loggedIn }: { loggedIn: boolean }) {
     </div>
   );
 }
-export default function Home({ data }: PageProps<Data>) {
+export default function Home({ state }: PageProps<unknown, AppState>) {
   const dateTonight = Dates.getMonthDay();
   return (
     <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center overflow-auto">
-      <LoginOutButton loggedIn={false} />
-      <PersonalVerse name="Josh" />
+      <LoginOutButton loggedIn={!!state.profile} />
+      <PersonalVerse name={state.profile?.username} />
       <span class="text-slate-200 text-lg my-4">
         Attendance for {dateTonight}:
         <span class="font-bold text-3xl font-mono ml-2">102</span>

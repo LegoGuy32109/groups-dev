@@ -147,11 +147,15 @@ interface PersonalVerseData {
   chapter: number;
   verses: Array<number>;
 }
-export function getPersonalVerseText(
-  name: string,
-  verse: PersonalVerseData,
-): string {
-  return verse.verseTemplate.replace("{name}", name);
+export function getPersonalVerseText(template: string, name?: string) {
+  const [first, last] = template.split("{name}");
+  return (
+    <>
+      {first}
+      <span>{name}</span>
+      {name ? last : last.slice(2)}
+    </>
+  );
 }
 export function getVerseLink(
   verse: PersonalVerseData,
