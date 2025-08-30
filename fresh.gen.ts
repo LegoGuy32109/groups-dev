@@ -7,7 +7,7 @@ import * as $_app from "./routes/_app.tsx";
 import * as $about from "./routes/about.tsx";
 import * as $api_botMessage from "./routes/api/botMessage.ts";
 import * as $api_joke from "./routes/api/joke.ts";
-import * as $api_login from "./routes/api/login.tsx";
+import * as $api_login from "./routes/api/login.ts";
 import * as $api_prefill from "./routes/api/prefill.ts";
 import * as $countdown from "./routes/countdown.tsx";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
@@ -31,7 +31,7 @@ const manifest = {
     "./routes/about.tsx": $about,
     "./routes/api/botMessage.ts": $api_botMessage,
     "./routes/api/joke.ts": $api_joke,
-    "./routes/api/login.tsx": $api_login,
+    "./routes/api/login.ts": $api_login,
     "./routes/api/prefill.ts": $api_prefill,
     "./routes/countdown.tsx": $countdown,
     "./routes/greet/[name].tsx": $greet_name_,

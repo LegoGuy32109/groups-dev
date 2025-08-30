@@ -83,7 +83,7 @@ export async function getPbkdf2Hash(
 export async function signup(
   username: string,
   password: string,
-): AsyncResult<{ userId: string }> {
+): AsyncResult<{ userId: string; token: string }> {
   const kv = await Db.kv();
 
   const usernameKey = ["usernames", username];
@@ -119,6 +119,11 @@ export async function signup(
   const userAuthKey = ["users", newUserId, "auth"];
   const userProfileKey = ["users", newUserId, "profile"];
 
+  const prefillToken = crypto.randomUUID();
+  const prefillKey = ["tokens", prefillToken];
+  // In 28 days this token record will expire
+  const expireIn = 28 * 24 * 60 * 60 * 1000;
+
   const createUserResponse = await kv.atomic()
     // ensure the user does not exist
     .check({ key: userAuthKey, versionstamp: null })
@@ -128,6 +133,9 @@ export async function signup(
     .set(userProfileKey, userProfileRecord)
     // provide lookup for username -> userId
     .set(usernameKey, newUserId)
+    // create temporary token for login prefill link
+    .check({ key: prefillKey, versionstamp: null })
+    .set(prefillKey, { username, password }, { expireIn })
     .commit();
 
   if (!createUserResponse.ok) {
@@ -137,7 +145,7 @@ export async function signup(
     };
   }
 
-  return { success: true, userId: newUserId };
+  return { success: true, userId: newUserId, token: prefillToken };
 }
 
 export async function login(
