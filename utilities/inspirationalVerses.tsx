@@ -170,7 +170,7 @@ export function getVerseLink(
       const chapter = [BibleBook.Psalms].includes(verse.book)
         ? `${verse.chapter}_1`
         : verse.chapter;
-      urlPostfix = `1713/${osis}.${chapter}.${verse.verses.join("-")}.NIV`;
+      urlPostfix = `1713/${osis}.${chapter}.${verse.verses.join("-")}.CSB`;
       break;
     }
     case BibleTranslation.NIV:
@@ -185,121 +185,121 @@ export function getVerseLinkText(verse: PersonalVerseData): string {
   }`;
 }
 export const PERSONAL_VERSES: Array<PersonalVerseData> = [
-  {
-    verseTemplate:
-      "I will heal your broken heart, {name}, and mend all your wounds.",
-    book: BibleBook.Psalms,
-    chapter: 147,
-    verses: [3],
-  },
-  {
-    verseTemplate:
-      "If I look after the sparrows, {name}, I will certainly take care of you.",
-    book: BibleBook.Luke,
-    chapter: 12,
-    verses: [6, 7],
-  },
-  {
-    verseTemplate:
-      "No matter what happens, I will not leave you, {name}, when you pass through the waters, I will be with you, and when you pass throught the rivers, they will not sweep over you.",
-    book: BibleBook.Isaiah,
-    chapter: 43,
-    verses: [2],
-  },
-  {
-    verseTemplate:
-      "I will not abandon you, {name}, for I am glad to make you My very own.",
-    book: BibleBook.FirstSamuel,
-    chapter: 12,
-    verses: [22],
-  },
-  {
-    verseTemplate: "Wait paitently for Me, {name}, and I will hear your cry.",
-    book: BibleBook.Psalms,
-    chapter: 40,
-    verses: [1],
-  },
-  {
-    verseTemplate:
-      "I will protect and carry you, {name}, all the days of your life.",
-    book: BibleBook.Isaiah,
-    chapter: 46,
-    verses: [4],
-  },
-  {
-    verseTemplate:
-      "I will take hold of your hand {name}, To keep you from falling.",
-    book: BibleBook.Psalms,
-    chapter: 37,
-    verses: [24],
-  },
-  {
-    verseTemplate:
-      "I will meet your every need, {name}, through My eternal riches in Jesus Christ.",
-    book: BibleBook.Philippians,
-    chapter: 4,
-    verses: [19],
-  },
-  {
-    verseTemplate: "I will forgive your sins, {name}, and then forget them.",
-    book: BibleBook.Hebrews,
-    chapter: 8,
-    verses: [12],
-  },
-  {
-    verseTemplate:
-      "I will Keep you safe, {name}, because no one can snatch you out of My hand.",
-    book: BibleBook.John,
-    chapter: 10,
-    verses: [29],
-  },
-  {
-    verseTemplate:
-      "I have chosen you, {name}, to be My own precious possession.",
-    book: BibleBook.Deuteronomy,
-    chapter: 7,
-    verses: [6],
-  },
-  {
-    verseTemplate: "My spirit made you, {name}, and My breath gives you life.",
-    book: BibleBook.Job,
-    chapter: 33,
-    verses: [4],
-  },
-  {
-    verseTemplate:
-      "Be strong and courageous, {name}. Do not be terrified, do not be discouraged, for the Lord your God will be with you wherever you go.",
-    book: BibleBook.Joshua,
-    chapter: 1,
-    verses: [9],
-  },
-  {
-    verseTemplate: "My Power will rest on you, {name}, When you are weak.",
-    book: BibleBook.SecondCorinthians,
-    chapter: 12,
-    verses: [9],
-  },
-  {
-    verseTemplate:
-      "I see all your hardships, {name}, and I care about your suffering.",
-    book: BibleBook.Psalms,
-    chapter: 31,
-    verses: [7],
-  },
-  {
-    verseTemplate:
-      "I will be the voice behind you, {name}, guiding you in the way you should go.",
-    book: BibleBook.Isaiah,
-    chapter: 30,
-    verses: [31],
-  },
-  {
-    verseTemplate:
-      "Jesus bore your sins on the cross, {name}, so you would be healed.",
-    book: BibleBook.FirstPeter,
-    chapter: 2,
-    verses: [24],
-  },
+  //{
+  //  verseTemplate:
+  //    "I will heal your broken heart, {name}, and mend all your wounds.",
+  //  book: BibleBook.Psalms,
+  //  chapter: 147,
+  //  verses: [3],
+  //},
+  //{
+  //  verseTemplate:
+  //    "If I look after the sparrows, {name}, I will certainly take care of you.",
+  //  book: BibleBook.Luke,
+  //  chapter: 12,
+  //  verses: [6, 7],
+  //},
+  //{
+  //  verseTemplate:
+  //    "No matter what happens, I will not leave you, {name}, when you pass through the waters, I will be with you, and when you pass throught the rivers, they will not sweep over you.",
+  //  book: BibleBook.Isaiah,
+  //  chapter: 43,
+  //  verses: [2],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will not abandon you, {name}, for I am glad to make you My very own.",
+  //  book: BibleBook.FirstSamuel,
+  //  chapter: 12,
+  //  verses: [22],
+  //},
+  //{
+  //  verseTemplate: "Wait paitently for Me, {name}, and I will hear your cry.",
+  //  book: BibleBook.Psalms,
+  //  chapter: 40,
+  //  verses: [1],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will protect and carry you, {name}, all the days of your life.",
+  //  book: BibleBook.Isaiah,
+  //  chapter: 46,
+  //  verses: [4],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will take hold of your hand {name}, To keep you from falling.",
+  //  book: BibleBook.Psalms,
+  //  chapter: 37,
+  //  verses: [24],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will meet your every need, {name}, through My eternal riches in Jesus Christ.",
+  //  book: BibleBook.Philippians,
+  //  chapter: 4,
+  //  verses: [19],
+  //},
+  //{
+  //  verseTemplate: "I will forgive your sins, {name}, and then forget them.",
+  //  book: BibleBook.Hebrews,
+  //  chapter: 8,
+  //  verses: [12],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will Keep you safe, {name}, because no one can snatch you out of My hand.",
+  //  book: BibleBook.John,
+  //  chapter: 10,
+  //  verses: [29],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I have chosen you, {name}, to be My own precious possession.",
+  //  book: BibleBook.Deuteronomy,
+  //  chapter: 7,
+  //  verses: [6],
+  //},
+  //{
+  //  verseTemplate: "My spirit made you, {name}, and My breath gives you life.",
+  //  book: BibleBook.Job,
+  //  chapter: 33,
+  //  verses: [4],
+  //},
+  //{
+  //  verseTemplate:
+  //    "Be strong and courageous, {name}. Do not be terrified, do not be discouraged, for the Lord your God will be with you wherever you go.",
+  //  book: BibleBook.Joshua,
+  //  chapter: 1,
+  //  verses: [9],
+  //},
+  //{
+  //  verseTemplate: "My Power will rest on you, {name}, When you are weak.",
+  //  book: BibleBook.SecondCorinthians,
+  //  chapter: 12,
+  //  verses: [9],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I see all your hardships, {name}, and I care about your suffering.",
+  //  book: BibleBook.Psalms,
+  //  chapter: 31,
+  //  verses: [7],
+  //},
+  //{
+  //  verseTemplate:
+  //    "I will be the voice behind you, {name}, guiding you in the way you should go.",
+  //  book: BibleBook.Isaiah,
+  //  chapter: 30,
+  //  verses: [31],
+  //},
+  //{
+  //  verseTemplate:
+  //    "Jesus bore your sins on the cross, {name}, so you would be healed.",
+  //  book: BibleBook.FirstPeter,
+  //  chapter: 2,
+  //  verses: [24],
+  //},
   {
     verseTemplate:
       "The Lord your God is in your midst, {name}, a mighty one who will save; I will rejoice over you with gladness; I will quiet you by my love; I will exult over you with loud singing.",
