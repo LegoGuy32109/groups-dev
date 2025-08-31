@@ -1,12 +1,20 @@
 import LoginFrom from "../islands/LoginForm.tsx";
 import { Handler, PageProps } from "$fresh/server.ts";
 import { Cookies } from "../utilities/Cookies.ts";
+import { AppState } from "./_middleware.ts";
 
-export const handler: Handler = async (req, ctx) => {
-  // if you were redirected from api with error
+interface LoginInfo {
+  username?: string;
+  password?: string;
+}
+
+export const handler: Handler<LoginInfo, AppState> = async (req, ctx) => {
+  // if you were redirected from api with error,
+  // set error state with that message
   const errorMessage = Cookies.get(req, Cookies.Error);
   if (errorMessage) {
-    const response = await ctx.render({ error: errorMessage });
+    ctx.state.errors = [errorMessage];
+    const response = await ctx.render();
     Cookies.clear(response.headers, Cookies.Error);
     return response;
   }
@@ -25,17 +33,16 @@ export const handler: Handler = async (req, ctx) => {
   });
   // couldn't grab token from db
   if (!loginDetails.ok) {
-    return ctx.render({ error: await loginDetails.text() });
+    const error = await loginDetails.text();
+    ctx.state.errors = [error];
+    return ctx.render();
   }
   // got token from db
-  const loginInfo: { password: string; username: string } = await loginDetails
-    .json();
+  const loginInfo: LoginInfo = await loginDetails.json();
   return ctx.render(loginInfo);
 };
 export default function LoginPage(
-  { data = {} }: PageProps<
-    { username?: string; password?: string; error?: string }
-  >,
+  { state, data = {} }: PageProps<LoginInfo, AppState>,
 ) {
   return (
     <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center overflow-auto">
@@ -43,19 +50,9 @@ export default function LoginPage(
         Login to e91Students
       </h1>
       <LoginFrom username={data.username} password={data.password} />
-      <p class="text-red-700 mt-2 font-mono">{data.error}</p>
+      <p class="text-red-700 mt-2 font-mono">
+        {JSON.stringify(state.errors?.[0])}
+      </p>
     </div>
   );
 }
-//function Logout() {
-//  return (
-//    <form method="get" action="/api/logout">
-//      <button
-//        type="submit"
-//        class="rounded-full bg-sky-500 hover:bg-sky-400 text-slate-200 m-1 p-2 font-bold text-xs"
-//      >
-//        Logout
-//      </button>
-//    </form>
-//  );
-//}
