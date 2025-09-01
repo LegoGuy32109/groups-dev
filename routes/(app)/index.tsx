@@ -1,7 +1,7 @@
-import GroupOverview from "../islands/GroupOverview.tsx";
+import GroupOverview from "../../islands/GroupOverview.tsx";
 import { PageProps } from "$fresh/server.ts";
-import { Dates } from "../utilities/dates.ts";
-import { PersonalVerse } from "../components/PersonalVerse.tsx";
+import { Dates } from "../../utilities/dates.ts";
+import { PersonalVerse } from "../../components/PersonalVerse.tsx";
 import { AppState } from "./_middleware.ts";
 
 export default function Home({ state }: PageProps<unknown, AppState>) {
@@ -12,7 +12,7 @@ export default function Home({ state }: PageProps<unknown, AppState>) {
         Attendance for {dateTonight}:
         <span class="font-bold text-3xl font-mono ml-2">102</span>
       </div>
-      <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2 mb-4">
+      <div class="grid grid-cols-2 gap-2 sm:gap-8 gap-y-2 mb-4 select-none">
         <GroupOverview group="Senior Boys" count={33} />
         <GroupOverview group="Senior Girls" count={3} />
         <GroupOverview group="Junior Boys" count={0} />

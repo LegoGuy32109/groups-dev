@@ -15,7 +15,9 @@ export default function GroupOverview(
       <span class="font-semibold text-md sm:text-2xl whitespace-break-spaces mx-2 w-min">
         {group}
       </span>
-      <span class="text-3xl sm:text-6xl font-bold font-mono">{count}</span>
+      <span class="text-3xl sm:text-6xl font-bold font-mono tabular-nums">
+        {count}
+      </span>
     </div>
   );
 }

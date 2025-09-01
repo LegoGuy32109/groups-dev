@@ -9,7 +9,7 @@ export function PersonalVerse({ name }: { name?: string }) {
   const verse =
     PERSONAL_VERSES[Math.floor(Math.random() * PERSONAL_VERSES.length)];
   return (
-    <div class="mt-16 mb-2 px-8 gap-y-2 flex flex-col">
+    <div class="p-8 gap-y-2 flex flex-col">
       <h1 class="text-2xl font-semibold p-1 quoteGradient">
         {getPersonalVerseText(verse.verseTemplate, name)}
       </h1>

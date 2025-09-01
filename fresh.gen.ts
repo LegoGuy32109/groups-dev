@@ -2,25 +2,21 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $_app_layout from "./routes/(app)/_layout.tsx";
+import * as $_app_middleware from "./routes/(app)/_middleware.ts";
+import * as $_app_about from "./routes/(app)/about.tsx";
+import * as $_app_index from "./routes/(app)/index.tsx";
+import * as $_app_login from "./routes/(app)/login.tsx";
+import * as $_app_search from "./routes/(app)/search.tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $_layout from "./routes/_layout.tsx";
-import * as $_middleware from "./routes/_middleware.ts";
-import * as $about from "./routes/about.tsx";
 import * as $api_botMessage from "./routes/api/botMessage.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_login from "./routes/api/login.ts";
 import * as $api_logout from "./routes/api/logout.ts";
 import * as $api_prefill from "./routes/api/prefill.ts";
-import * as $countdown from "./routes/countdown.tsx";
-import * as $greet_name_ from "./routes/greet/[name].tsx";
-import * as $greet_index from "./routes/greet/index.tsx";
-import * as $index from "./routes/index.tsx";
-import * as $login from "./routes/login.tsx";
-import * as $search from "./routes/search.tsx";
-import * as $test_bots from "./routes/test/bots.tsx";
 import * as $BotTest from "./islands/BotTest.tsx";
-import * as $Countdown from "./islands/Countdown.tsx";
+import * as $CornerMenu from "./islands/CornerMenu.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $GroupOverview from "./islands/GroupOverview.tsx";
 import * as $LoginForm from "./islands/LoginForm.tsx";
@@ -29,27 +25,23 @@ import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
+    "./routes/(app)/_layout.tsx": $_app_layout,
+    "./routes/(app)/_middleware.ts": $_app_middleware,
+    "./routes/(app)/about.tsx": $_app_about,
+    "./routes/(app)/index.tsx": $_app_index,
+    "./routes/(app)/login.tsx": $_app_login,
+    "./routes/(app)/search.tsx": $_app_search,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/_layout.tsx": $_layout,
-    "./routes/_middleware.ts": $_middleware,
-    "./routes/about.tsx": $about,
     "./routes/api/botMessage.ts": $api_botMessage,
     "./routes/api/joke.ts": $api_joke,
     "./routes/api/login.ts": $api_login,
     "./routes/api/logout.ts": $api_logout,
     "./routes/api/prefill.ts": $api_prefill,
-    "./routes/countdown.tsx": $countdown,
-    "./routes/greet/[name].tsx": $greet_name_,
-    "./routes/greet/index.tsx": $greet_index,
-    "./routes/index.tsx": $index,
-    "./routes/login.tsx": $login,
-    "./routes/search.tsx": $search,
-    "./routes/test/bots.tsx": $test_bots,
   },
   islands: {
     "./islands/BotTest.tsx": $BotTest,
-    "./islands/Countdown.tsx": $Countdown,
+    "./islands/CornerMenu.tsx": $CornerMenu,
     "./islands/Counter.tsx": $Counter,
     "./islands/GroupOverview.tsx": $GroupOverview,
     "./islands/LoginForm.tsx": $LoginForm,

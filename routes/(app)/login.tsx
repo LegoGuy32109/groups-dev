@@ -1,6 +1,6 @@
-import LoginFrom from "../islands/LoginForm.tsx";
+import LoginFrom from "../../islands/LoginForm.tsx";
 import { Handler, PageProps } from "$fresh/server.ts";
-import { Cookies } from "../utilities/Cookies.ts";
+import { Cookies } from "../../utilities/Cookies.ts";
 import { AppState } from "./_middleware.ts";
 
 interface LoginInfo {
@@ -12,6 +12,7 @@ export const handler: Handler<LoginInfo, AppState> = async (req, ctx) => {
   // if you were redirected from api with error,
   // set error state with that message
   const errorMessage = Cookies.get(req, Cookies.Error);
+  console.log('error', errorMessage)
   if (errorMessage) {
     ctx.state.errors = [errorMessage];
     const response = await ctx.render();
@@ -45,7 +46,7 @@ export default function LoginPage(
   { state, data = {} }: PageProps<LoginInfo, AppState>,
 ) {
   return (
-    <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center overflow-auto">
+    <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center justify-center overflow-auto">
       <h1 class="font-semibold text-3xl text-slate-600 leading-relaxed tracking-wider">
         Login to e91Students
       </h1>

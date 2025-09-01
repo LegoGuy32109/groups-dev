@@ -16,6 +16,15 @@ export const handler: Handlers = {
             value: JSON.stringify(removeResult.errors),
           },
         });
+        // to show errors
+        headers.set("location", "/login");
+        return new Response(
+          null,
+          {
+            status: 303, // redirect
+            headers,
+          },
+        );
       }
     }
     Cookies.clear(headers, Cookies.Auth);

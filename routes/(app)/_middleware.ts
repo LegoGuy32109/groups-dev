@@ -1,18 +1,23 @@
 import { MiddlewareHandler } from "$fresh/server.ts";
-import { Profile, Session } from "../utilities/security.ts";
-import { Cookies } from "../utilities/Cookies.ts";
-import { Db } from "../utilities/Database.ts";
+import { Profile, Session } from "../../utilities/security.ts";
+import { Cookies } from "../../utilities/Cookies.ts";
+import { Db } from "../../utilities/Database.ts";
 export interface AppState {
   session?: Session;
   profile?: Profile;
   errors?: Array<string>;
+  urlPath?: string;
 }
 export const handler: MiddlewareHandler<AppState> = async (req, ctx) => {
   // default to unauthenticated
   ctx.state = {
     session: undefined,
     profile: undefined,
+    errors: undefined,
+    // indicate what path the user is on
+    urlPath: ctx.url.pathname,
   };
+  console.log(ctx.state.urlPath);
   // if an auth cookie exists with session id, attempt to access it
   const sessionId = Cookies.get(req, Cookies.Auth);
   if (sessionId) {
@@ -25,11 +30,10 @@ export const handler: MiddlewareHandler<AppState> = async (req, ctx) => {
           profile: profileResult.profile,
         };
       } else {
-        // TODO: think of better error state management system
-        //ctx.state.errors = profileResult.errors;
+        ctx.state.errors = profileResult.errors;
       }
     } else {
-      //ctx.state.errors = sessionResult.errors;
+      ctx.state.errors = sessionResult.errors;
     }
   }
   // return any route requested

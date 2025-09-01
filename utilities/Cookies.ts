@@ -3,11 +3,7 @@ export class Cookies {
   static Error = "e91-students-error";
   static Auth = "e91-students-auth";
   static clear(headers: Headers, cookieName: string) {
-    deleteCookie(headers, cookieName);
-    const set = headers.get("set-cookie");
-    if (set) {
-      headers.append("set-cookie", set);
-    }
+    deleteCookie(headers, cookieName, { path: "/" });
   }
   static get(
     requestOrHeaders: Request | Headers,
