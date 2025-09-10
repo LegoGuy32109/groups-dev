@@ -12,7 +12,7 @@ export const handler: Handler<LoginInfo, AppState> = async (req, ctx) => {
   // if you were redirected from api with error,
   // set error state with that message
   const errorMessage = Cookies.get(req, Cookies.Error);
-  console.log('error', errorMessage)
+  console.log("error", errorMessage);
   if (errorMessage) {
     ctx.state.errors = [errorMessage];
     const response = await ctx.render();
