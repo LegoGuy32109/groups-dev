@@ -1,7 +1,9 @@
 import { MiddlewareHandler } from "$fresh/server.ts";
-import { Profile, Session } from "../../utilities/security.ts";
+import { Profile } from "../../types/entities/Profile.ts";
+import { Session } from "../../types/entities/Session.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Db } from "../../utilities/Database.ts";
+
 export interface AppState {
   session?: Session;
   profile?: Profile;

@@ -1,9 +1,14 @@
+import { Authentication } from "../types/entities/Authentication.ts";
+import { Profile } from "../types/entities/Profile.ts";
+import { Session } from "../types/entities/Session.ts";
 import { Errors } from "./Errors.ts";
-import { AsyncResult, Authentication, Profile, Session } from "./security.ts";
+import { AsyncResult } from "./security.ts";
+
 interface DbOptions {
   test?: boolean;
   path?: string;
 }
+
 export class Db {
   private static _kv: Deno.Kv | null = null;
   /**

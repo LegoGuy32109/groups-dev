@@ -1,28 +1,9 @@
 import { UserAgent } from "$std/http/user_agent.ts";
+import { Authentication } from "../types/entities/Authentication.ts";
+import { Profile } from "../types/entities/Profile.ts";
+import { Session } from "../types/entities/Session.ts";
 import { Db } from "./Database.ts";
 import { Dates } from "./dates.ts";
-
-export interface Profile {
-  username: string;
-  displayName: string;
-  createdOn: string; // iso
-  updatedOn: string; // iso
-}
-
-export interface Authentication {
-  algo: string;
-  iterations: number;
-  saltB64: string;
-  hashB64: string;
-  createdOn: string; // iso
-}
-
-export interface Session {
-  userId: string;
-  createdOn: string; // iso
-  updatedOn: string; // iso
-  userAgent?: UserAgent;
-}
 
 export type AsyncResult<T = void> = Promise<Result<T>>;
 export type Result<T = void> = T extends void
@@ -107,13 +88,17 @@ export async function signup(
     saltB64: toBase64(salt),
     hashB64: toBase64(derivedKey),
     createdOn: nowIso,
+    createdBy: "",
+    updatedOn: "",
+    updatedBy: "",
   };
 
   const userProfileRecord: Profile = {
     username,
-    displayName: username,
     createdOn: nowIso,
     updatedOn: nowIso,
+    createdBy: "system",
+    updatedBy: "system",
   };
 
   const userAuthKey = ["users", newUserId, "auth"];
@@ -187,6 +172,8 @@ export async function login(
     userId,
     createdOn: nowIso,
     updatedOn: nowIso,
+    createdBy: "system",
+    updatedBy: "system",
     userAgent,
   };
   const addSessionResult = await Db.addNewSession(

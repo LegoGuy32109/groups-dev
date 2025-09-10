@@ -1,14 +1,11 @@
 import { Db } from "../utilities/Database.ts";
-import {
-  Authentication,
-  login,
-  logout,
-  Profile,
-  signup,
-} from "../utilities/security.ts";
+import { login, logout, signup } from "../utilities/security.ts";
 import { Errors } from "../utilities/Errors.ts";
 import { Test } from "./Test.ts";
 import { assert, assertEquals, assertNotEquals } from "$std/assert/mod.ts";
+import { Authentication } from "../types/entities/Authentication.ts";
+import { Profile } from "../types/entities/Profile.ts";
+
 Deno.test({
   name: "signing up creates a user and user can be delted",
   fn: Test.runInTempDb(async () => {

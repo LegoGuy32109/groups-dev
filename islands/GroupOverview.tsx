@@ -15,7 +15,11 @@ export default function GroupOverview(
       <span class="font-semibold text-md sm:text-2xl whitespace-break-spaces mx-2 w-min">
         {group}
       </span>
-      <span class="text-3xl sm:text-6xl font-bold font-mono tabular-nums">
+      <span
+        class={`text-3xl sm:text-6xl font-bold font-mono tabular-nums ${
+          count === 0 ? "opacity-75" : ""
+        }`}
+      >
         {count}
       </span>
     </div>
