@@ -1,16 +1,12 @@
 export default function GroupOverview(
   { group, count }: { group: string; count: number },
 ) {
+  const groupComponent = decodeURIComponent(encodeURIComponent(group));
+  console.log(groupComponent);
   return (
-    <div
-      class="flex justify-between items-center flex-row 
-            py-2 px-3 shadow-lg shadow-sky-900 bg-sky-700 
-        even:bg-pink-700 even:shadow-pink-900 rounded-full font-sans text-slate-200
-      cursor-pointer hover:scale-105 transition-all"
-      onClick={(e) => {
-        console.log(e);
-        globalThis.location.href = `./attendance/${group}`;
-      }}
+    <a
+      class="flex justify-between items-center flex-row py-2 px-3 shadow-lg shadow-sky-900 bg-sky-700 even:bg-pink-700 even:shadow-pink-900 rounded-full font-sans text-slate-200 cursor-pointer hover:scale-105 transition-all"
+      href={`./attendance/${group}`}
     >
       <span class="font-semibold text-md sm:text-2xl whitespace-break-spaces mx-2 w-min">
         {group}
@@ -22,6 +18,6 @@ export default function GroupOverview(
       >
         {count}
       </span>
-    </div>
+    </a>
   );
 }

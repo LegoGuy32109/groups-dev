@@ -5,6 +5,7 @@
 import * as $_app_layout from "./routes/(app)/_layout.tsx";
 import * as $_app_middleware from "./routes/(app)/_middleware.ts";
 import * as $_app_about from "./routes/(app)/about.tsx";
+import * as $_app_attendance_group_ from "./routes/(app)/attendance/[group].tsx";
 import * as $_app_index from "./routes/(app)/index.tsx";
 import * as $_app_login from "./routes/(app)/login.tsx";
 import * as $_app_search from "./routes/(app)/search.tsx";
@@ -28,6 +29,7 @@ const manifest = {
     "./routes/(app)/_layout.tsx": $_app_layout,
     "./routes/(app)/_middleware.ts": $_app_middleware,
     "./routes/(app)/about.tsx": $_app_about,
+    "./routes/(app)/attendance/[group].tsx": $_app_attendance_group_,
     "./routes/(app)/index.tsx": $_app_index,
     "./routes/(app)/login.tsx": $_app_login,
     "./routes/(app)/search.tsx": $_app_search,
