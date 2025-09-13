@@ -30,14 +30,18 @@ export default function HyrdrationBoundary(
 
   if (fallback && !hydrated) {
     return (
-      <div class="relative" inert={!hydrated} aria-busy={!hydrated}>
+      <div inert={!hydrated} aria-busy={!hydrated}>
         {fallback}
       </div>
     );
   }
 
   return (
-    <div class="relative w-full h-full" inert={!hydrated} aria-busy={hydrated}>
+    <div
+      class="relative w-full h-full grow flex"
+      inert={!hydrated}
+      aria-busy={!hydrated}
+    >
       {children}
       <div
         aria-hidden="true"

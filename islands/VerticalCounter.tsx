@@ -2,7 +2,7 @@ import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
 
 export default function VerticalCounter({ count }: { count: number }) {
   const className =
-    "w-full grow bg-slate-700/60 flex justify-center rounded-xl border-slate-900/80 border-[15px]";
+    "w-full grow bg-slate-700/60 flex justify-center items-center rounded-xl border-slate-900/80 border-[15px]";
 
   return (
     <HyrdrationBoundary>
