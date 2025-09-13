@@ -22,6 +22,7 @@ import * as $Counter from "./islands/Counter.tsx";
 import * as $GroupOverview from "./islands/GroupOverview.tsx";
 import * as $LoginForm from "./islands/LoginForm.tsx";
 import * as $NameInput from "./islands/NameInput.tsx";
+import * as $VerticalCounter from "./islands/VerticalCounter.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -48,6 +49,7 @@ const manifest = {
     "./islands/GroupOverview.tsx": $GroupOverview,
     "./islands/LoginForm.tsx": $LoginForm,
     "./islands/NameInput.tsx": $NameInput,
+    "./islands/VerticalCounter.tsx": $VerticalCounter,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

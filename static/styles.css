@@ -32,3 +32,9 @@ body {
   background-clip: text;
   color: transparent;
 }
+
+@keyframes spinner_y6GP {
+  100% {
+    transform: rotate(360deg);
+  }
+}
