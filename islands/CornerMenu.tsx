@@ -1,20 +1,25 @@
 import { useSignal } from "@preact/signals";
 import { TbMenu2 } from "@preact-icons/tb";
 import { State } from "../utils.ts";
+import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
 
 export default function CornerMenu({ state }: { state: State }) {
   const overlayOpen = useSignal(false);
   if (!overlayOpen.value) {
     return (
-      <button
-        type="button"
-        class="absoluteButton hover:cursor-pointer pointer-events-auto fixed right-2 top-2 z-50"
-        onClick={() => {
-          overlayOpen.value = true;
-        }}
-      >
-        <TbMenu2 class="text-slate-400" />
-      </button>
+      <div class="fixed right-2 top-2 z-50">
+        <HyrdrationBoundary overlayClass="rounded-lg">
+          <button
+            type="button"
+            class="absoluteButton hover:cursor-pointer pointer-events-auto"
+            onClick={() => {
+              overlayOpen.value = true;
+            }}
+          >
+            <TbMenu2 class="text-slate-400" />
+          </button>
+        </HyrdrationBoundary>
+      </div>
     );
   }
   const loggedIn = !!state?.session;
