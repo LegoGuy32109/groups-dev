@@ -34,6 +34,7 @@ export default function VerticalCounter(
     count.value += 1;
   }
 
+  // INFO: this activates the active property of buttons on ios so animations look nice
   globalThis.addEventListener("touchstart", () => {}, { passive: true });
 
   return (
