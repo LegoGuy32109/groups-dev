@@ -8,6 +8,8 @@
     "jsr:@fresh/core@2": "2.1.0",
     "jsr:@fresh/core@^2.1.0": "2.1.0",
     "jsr:@fresh/plugin-vite@^1.0.3": "1.0.3",
+    "jsr:@preact-icons/common@^1.1.0": "1.1.0",
+    "jsr:@preact-icons/tb@^1.0.14": "1.0.14",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
     "jsr:@std/cli@^1.0.21": "1.0.22",
     "jsr:@std/dotenv@~0.225.5": "0.225.5",
@@ -45,6 +47,7 @@
     "npm:esbuild@0.25.7": "0.25.7",
     "npm:esbuild@~0.25.5": "0.25.7",
     "npm:preact-render-to-string@^6.5.11": "6.6.1_preact@10.27.2",
+    "npm:preact@^10.22.1": "10.27.2",
     "npm:preact@^10.27.0": "10.27.2",
     "npm:preact@^10.27.2": "10.27.2",
     "npm:rollup@^4.50.0": "4.50.2",
@@ -109,6 +112,18 @@
         "npm:@prefresh/vite",
         "npm:rollup",
         "npm:vite@^7.1.4"
+      ]
+    },
+    "@preact-icons/common@1.1.0": {
+      "integrity": "ed191a9f88ee0e35539b8de3482d1f8a223b3f14f3b0dbfcba063c70ca4332fc",
+      "dependencies": [
+        "npm:preact@^10.22.1"
+      ]
+    },
+    "@preact-icons/tb@1.0.14": {
+      "integrity": "46e4f3edfdbefc4080714ffb18327a72257696d670d479b1108890345674a6e2",
+      "dependencies": [
+        "jsr:@preact-icons/common"
       ]
     },
     "@std/bytes@1.0.6": {
@@ -1347,6 +1362,7 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.0",
       "jsr:@fresh/plugin-vite@^1.0.3",
+      "jsr:@preact-icons/tb@^1.0.14",
       "jsr:@std/http@^1.0.20",
       "npm:@preact/signals@^2.3.1",
       "npm:@tailwindcss/vite@^4.1.13",
