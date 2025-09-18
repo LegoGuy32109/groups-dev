@@ -33,10 +33,6 @@
   "unstable": [
     "kv"
   ],
-  "permissions": {
-    "read": true,
-    "write": true
-  },
   "compilerOptions": {
     "lib": [
       "dom",
