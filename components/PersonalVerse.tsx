@@ -1,10 +1,52 @@
 import {
+  BIBLE_BOOK_INFO,
+  BibleBook,
   BibleTranslation,
-  getPersonalVerseText,
-  getVerseLink,
-  getVerseLinkText,
+  getBibleBookName,
   PERSONAL_VERSES,
-} from "../utilities/inspirationalVerses.tsx";
+  PersonalVerseData,
+} from "../utilities/bibleInfo.ts";
+
+function getPersonalVerseText(template: string, name?: string) {
+  const [first, last] = template.split("{name}");
+  return (
+    <>
+      {first}
+      <span>{name}</span>
+      {name ? last : last.slice(2)}
+    </>
+  );
+}
+
+function getVerseLink(
+  verse: PersonalVerseData,
+  translation?: BibleTranslation,
+): string {
+  const urlPrefix = `https://www.bible.com/bible/`;
+  let urlPostfix = "";
+  const { osis } = BIBLE_BOOK_INFO[verse.book];
+  switch (translation) {
+    case BibleTranslation.CSB: {
+      // edge cases for api routing
+      const chapter = [BibleBook.Psalms].includes(verse.book)
+        ? `${verse.chapter}_1`
+        : verse.chapter;
+      urlPostfix = `1713/${osis}.${chapter}.${verse.verses.join("-")}.CSB`;
+      break;
+    }
+    case BibleTranslation.NIV:
+    default:
+      urlPostfix = `111/${osis}.${verse.chapter}.${verse.verses.join("-")}.NIV`;
+  }
+  return urlPrefix.concat(urlPostfix);
+}
+
+function getVerseLinkText(verse: PersonalVerseData): string {
+  return `${getBibleBookName(verse.book)} ${verse.chapter}:${
+    verse.verses.join("-")
+  }`;
+}
+
 export function PersonalVerse({ name }: { name?: string }) {
   const verse =
     PERSONAL_VERSES[Math.floor(Math.random() * PERSONAL_VERSES.length)];

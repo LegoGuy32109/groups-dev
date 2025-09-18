@@ -1,34 +1,60 @@
 {
-  "lock": false,
+  "nodeModulesDir": "auto",
   "tasks": {
-    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
-    "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
-    "manifest": "deno task cli manifest $(pwd)",
-    "start": "deno run --unstable-kv -A --watch=static/,routes/ dev.ts",
-    "build": "deno run -A dev.ts build",
-    "preview": "deno run -A main.ts",
-    "update": "deno run -A -r https://fresh.deno.dev/update .",
-    "test": "deno test --unstable-kv --parallel"
+    "check": "deno fmt --check . && deno lint . && deno check",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "deno serve -A _fresh/server.js",
+    "update": "deno run -A -r jsr:@fresh/update ."
   },
-  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-  "exclude": ["**/_fresh/*"],
+  "lint": {
+    "rules": {
+      "tags": [
+        "fresh",
+        "recommended"
+      ]
+    }
+  },
+  "exclude": [
+    "**/_fresh/*"
+  ],
   "imports": {
-    "$fresh/": "https://deno.land/x/fresh@1.7.3/",
-    "preact": "npm:preact@10.22.0",
-    "preact/hooks": "npm:preact@10.22.0/hooks",
-    "preact/jsx-runtime": "npm:preact@10.22.0/jsx-runtime",
-    "@preact/signals": "npm:@preact/signals@1.2.2",
-    "@preact/signals-core": "npm:@preact/signals-core@1.5.1",
-    "@tabler/icons-preact": "npm:@tabler/icons-preact@^3.35.0",
-    "tailwindcss": "npm:tailwindcss@3.4.1",
-    "tailwindcss/": "npm:/tailwindcss@3.4.1/",
-    "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
-    "$std/": "https://deno.land/std@0.216.0/"
+    "@std/http": "jsr:@std/http@^1.0.20",
+    "fresh": "jsr:@fresh/core@^2.1.0",
+    "preact": "npm:preact@^10.27.2",
+    "@preact/signals": "npm:@preact/signals@^2.3.1",
+    "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.3",
+    "vite": "npm:vite@^7.1.6",
+    "tailwindcss": "npm:tailwindcss@^4.1.13",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.13"
   },
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "lib": [
+      "dom",
+      "dom.asynciterable",
+      "dom.iterable",
+      "deno.ns"
+    ],
+    "jsx": "precompile",
     "jsxImportSource": "preact",
-    "types": ["preact"]
-  },
-  "nodeModulesDir": "auto"
+    "jsxPrecompileSkipElements": [
+      "a",
+      "img",
+      "source",
+      "body",
+      "html",
+      "head",
+      "title",
+      "meta",
+      "script",
+      "link",
+      "style",
+      "base",
+      "noscript",
+      "template"
+    ],
+    "types": [
+      "vite/client"
+    ]
+  }
 }

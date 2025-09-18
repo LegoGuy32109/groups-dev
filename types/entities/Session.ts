@@ -1,4 +1,4 @@
-import { UserAgent } from "$std/http/user_agent.ts";
+import { UserAgent } from "@std/http";
 import { Entity } from "./Entity.ts";
 
 export interface Session extends Entity {
