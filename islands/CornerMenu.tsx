@@ -16,15 +16,15 @@ export default function CornerMenu({ state }: { state: AppState }) {
   }
   const loggedIn = !!state?.session;
   return (
-    <>
+    <div class="flex flex-row h-screen w-screen fixed left-0 top-0">
       {/* The rest of the screen when clicked will close Menu overlay */}
       <div
-        class="fixed w-7/12 h-screen left-0 top-0"
+        class="grow h-screen"
         onClick={() => {
           overlayOpen.value = false;
         }}
       />
-      <div class="fixed w-5/12 h-screen bg-slate-900/90 text-slate-300 top-0 right-0
+      <div class="w-[160px] h-screen bg-slate-900/90 text-slate-300
     text-3xl font-light p-3 flex flex-col gap-y-4">
         {loggedIn ? <p>Profile</p> : null}
         {loggedIn
@@ -35,6 +35,6 @@ export default function CornerMenu({ state }: { state: AppState }) {
           )
           : <a href="/login">Login</a>}
       </div>
-    </>
+    </div>
   );
 }
