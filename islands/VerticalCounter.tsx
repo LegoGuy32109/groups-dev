@@ -14,6 +14,8 @@ export default function VerticalCounter(
      rounded-xl 
      border-slate-900 
      border-[15px]
+     text-base
+     touch-manipulation
      transition transform bg-slate-700 duration-75 ease-[cubic-bezier(.2,.1,.9,1)]
      active:bg-slate-500
      active:scale-95
@@ -31,6 +33,8 @@ export default function VerticalCounter(
   function incrementCount() {
     count.value += 1;
   }
+
+  globalThis.addEventListener("touchstart", () => {}, { passive: true });
 
   return (
     <HyrdrationBoundary>
