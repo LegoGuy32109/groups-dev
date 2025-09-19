@@ -26,13 +26,11 @@ export default function VerticalCounter(
 
   function decrementCount() {
     if (count.value > 0) {
-      navigator.vibrate(200);
       count.value += -1;
     }
   }
 
   function incrementCount() {
-    navigator.vibrate(200);
     count.value += 1;
   }
 
@@ -41,7 +39,7 @@ export default function VerticalCounter(
 
   return (
     <HyrdrationBoundary>
-      <div class="flex flex-col items-center w-full grow">
+      <div class="flex flex-col items-center w-full grow touch-none">
         <button
           type="button"
           class={`${className} border-b-0
