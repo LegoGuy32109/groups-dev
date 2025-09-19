@@ -26,11 +26,13 @@ export default function VerticalCounter(
 
   function decrementCount() {
     if (count.value > 0) {
+      navigator.vibrate(200);
       count.value += -1;
     }
   }
 
   function incrementCount() {
+    navigator.vibrate(200);
     count.value += 1;
   }
 
