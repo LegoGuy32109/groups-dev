@@ -56,12 +56,35 @@ export class Db {
     );
   }
 
-  static async getUserId(username: string): AsyncResult<{ userId: string }> {
+  static async getGroupmeIds() {
+    const kv = await Db.kv();
+
+    return await Array.fromAsync(
+      kv.list<string>({ prefix: ["groupmeIds"] }),
+    );
+  }
+
+  static async getUserIdFromGroupmeId(
+    id: string,
+  ): AsyncResult<{ userId: string }> {
+    const kv = await Db.kv();
+
+    const userId = (await kv.get<string>(["groupmeIds", id])).value;
+    if (!userId) {
+      return Errors.make(`No userId found for groupme id '${id}'`);
+    }
+
+    return { success: true, userId };
+  }
+
+  static async getUserIdFromUsername(
+    username: string,
+  ): AsyncResult<{ userId: string }> {
     const kv = await Db.kv();
 
     const userId = (await kv.get<string>(["usernames", username])).value;
     if (!userId) {
-      return Errors.make(`No userId found for ${username}`);
+      return Errors.make(`No userId found for '${username}'`);
     }
 
     return { success: true, userId };
@@ -114,6 +137,16 @@ export class Db {
       deleteTransaction.delete(key);
     }
 
+    // delete id in groupme lookup table (if exists)
+    const groupmeId = profile.groupme?.id;
+    let groupmeRecord: Deno.KvEntryMaybe<string> | undefined;
+    if (groupmeId) {
+      // get groupme record to indicate all deleted records
+      const groupmeKey = ["groupmeIds", groupmeId];
+      deleteTransaction.delete(groupmeKey);
+      groupmeRecord = await kv.get<string>(groupmeKey);
+    }
+
     // delete username in username lookup table
     const username = profile.username;
     const usernameKey = ["usernames", username];
@@ -135,6 +168,7 @@ export class Db {
       deletedRecords: [
         ...userRecords,
         usernameRecord.value ? usernameRecord : "<no username record found>",
+        groupmeRecord?.value ? groupmeRecord : "<no groupmeId record found>",
       ],
     };
   }

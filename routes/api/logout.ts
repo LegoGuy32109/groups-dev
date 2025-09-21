@@ -1,6 +1,6 @@
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Db } from "../../utilities/Database.ts";
-import { define } from "../../utils.ts";
+import { define, makeRedirectResponse } from "../../utils.ts";
 
 export const handler = define.handlers({
   async GET({ req }) {
@@ -16,25 +16,11 @@ export const handler = define.handlers({
             value: JSON.stringify(removeResult.errors),
           },
         });
-        // to show errors
-        headers.set("location", "/login");
-        return new Response(
-          null,
-          {
-            status: 303, // redirect
-            headers,
-          },
-        );
+        // redirect to login to show errors
+        return makeRedirectResponse(headers, "/login");
       }
     }
     Cookies.clear(headers, Cookies.Auth);
-    headers.set("location", "/");
-    return new Response(
-      null,
-      {
-        status: 303, // redirect
-        headers,
-      },
-    );
+    return makeRedirectResponse(headers);
   },
 });

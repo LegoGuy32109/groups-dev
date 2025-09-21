@@ -16,9 +16,7 @@
 }
 
 @layer components {
-  .absoluteButton {
-    @apply rounded-lg p-3 bg-slate-700/50 text-2xl font-light text-slate-400;
-  }
+  .absoluteButton { }
 }
 
 .quoteGradient {

@@ -133,13 +133,46 @@ export async function signup(
   return { success: true, userId: newUserId, token: prefillToken };
 }
 
+export async function groupmeLogin(
+  groupmeId: string,
+  userAgent?: UserAgent,
+): AsyncResult<{ sessionId: string }> {
+  // find user id from groupme.id, if user exists
+  const userIdResult = await Db.getUserIdFromGroupmeId(groupmeId);
+  if (!userIdResult.success) {
+    return userIdResult;
+  }
+  const { userId } = userIdResult;
+
+  // create a new session, it's id will be the auth cookie
+  const newSessionId = crypto.randomUUID();
+  const nowIso = Dates.getNowIso();
+  const newSessionRecord: Session = {
+    userId,
+    createdOn: nowIso,
+    updatedOn: nowIso,
+    createdBy: "system",
+    updatedBy: "system",
+    userAgent,
+  };
+  const addSessionResult = await Db.addNewSession(
+    newSessionId,
+    newSessionRecord,
+  );
+  if (!addSessionResult.success) {
+    return addSessionResult;
+  }
+  // return cookie for response in other function
+  return { success: true, sessionId: newSessionId };
+}
+
 export async function login(
   username: string,
   password: string,
   userAgent?: UserAgent,
 ): AsyncResult<{ sessionId: string }> {
   // find user id from username
-  const userIdResult = await Db.getUserId(username);
+  const userIdResult = await Db.getUserIdFromUsername(username);
   if (!userIdResult.success) {
     return userIdResult;
   }

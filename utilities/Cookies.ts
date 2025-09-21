@@ -3,6 +3,7 @@ import { Cookie, deleteCookie, getCookies, setCookie } from "@std/http";
 export class Cookies {
   static Error = "e91-students-error";
   static Auth = "e91-students-auth";
+  static Groupme = "e91-students-groupme"; // groupme access token
 
   static clear(headers: Headers, cookieName: string) {
     deleteCookie(headers, cookieName, { path: "/" });
@@ -23,6 +24,23 @@ export class Cookies {
     }
   }
 
+  static getErrors(
+    requestOrHeaders: Request | Headers,
+  ): Array<string> {
+    const stringifiedErrors = Cookies.get(requestOrHeaders, Cookies.Error);
+    if (!stringifiedErrors) return [];
+
+    let errors: Array<string> = [];
+    try {
+      errors = JSON.parse(stringifiedErrors);
+    } catch {
+      errors.push(
+        `Failed to parse errors in cookie, got '${stringifiedErrors}'`,
+      );
+    }
+    return errors;
+  }
+
   static set(
     { cookie, headers: paramHeaders }: SetCookieOptions,
   ): Headers {
@@ -36,6 +54,20 @@ export class Cookies {
       value: encodeURIComponent(cookie.value),
     });
     return headers;
+  }
+
+  static setErrors(
+    headers: Headers,
+    errors: Array<string>,
+  ): Headers {
+    return Cookies.set({
+      cookie: {
+        name: Cookies.Error,
+        value: JSON.stringify(errors),
+        maxAge: 20,
+      },
+      headers,
+    });
   }
 }
 

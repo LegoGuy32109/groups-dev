@@ -19,7 +19,7 @@ Deno.test({
 
     // check username is in username table
     const userIdResult = Errors.checkResult(
-      await Db.getUserId(username),
+      await Db.getUserIdFromUsername(username),
       "get userId not successful",
     );
     assertEquals(

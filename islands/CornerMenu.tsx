@@ -11,7 +11,7 @@ export default function CornerMenu({ state }: { state: State }) {
         <HyrdrationBoundary overlayClass="rounded-lg">
           <button
             type="button"
-            class="absoluteButton hover:cursor-pointer pointer-events-auto"
+            class="rounded-lg p-3 bg-slate-700/50 text-2xl font-light text-slate-400 hover:cursor-pointer pointer-events-auto"
             onClick={() => {
               overlayOpen.value = true;
             }}

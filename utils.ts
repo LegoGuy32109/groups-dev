@@ -12,3 +12,21 @@ export interface State {
 }
 
 export const define = createDefine<State>();
+
+const MAX_ERRORS = 10;
+
+export function updateErrors(state: State, newError: string | Array<string>) {
+  const newErrors = Array.isArray(newError) ? newError : [newError];
+  state.errors = [...newErrors, ...(state.errors ?? [])].slice(0, MAX_ERRORS);
+}
+
+/**
+ * Redirect to app index '/' if no location specified
+ */
+export function makeRedirectResponse(
+  headers: Headers,
+  location = "/",
+): Response {
+  headers.set("location", location);
+  return new Response(null, { status: 303, headers });
+}

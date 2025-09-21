@@ -1,6 +1,5 @@
 import { page } from "fresh";
-import { define } from "../../utils.ts";
-import { Cookies } from "../../utilities/Cookies.ts";
+import { define, updateErrors } from "../../utils.ts";
 
 interface LoginInfo {
   username?: string;
@@ -9,18 +8,7 @@ interface LoginInfo {
 
 // export const handler: Handler<LoginInfo, AppState> = async (req, ctx) => {
 export const handler = define.handlers({
-  async GET(ctx) {
-    const { req } = ctx;
-    // if you were redirected from api with error,
-    // set error state with that message
-    const errorMessage = Cookies.get(req, Cookies.Error);
-    if (errorMessage) {
-      ctx.state.errors = [errorMessage];
-      const response = page();
-      Cookies.clear(new Headers(response.headers), Cookies.Error);
-      return response;
-    }
-
+  async GET({ req, state }) {
     // check if token exists for first time sign-in
     const url = new URL(req.url);
     const possibleToken = url.searchParams.get("token");
@@ -36,14 +24,17 @@ export const handler = define.handlers({
     // couldn't grab token from db
     if (!loginDetails.ok) {
       const error = await loginDetails.text();
-      ctx.state.errors = [error];
+      updateErrors(state, error);
       return page();
     }
+
     // got token from db
     const loginInfo: LoginInfo = await loginDetails.json();
     return page({ loginInfo });
   },
 });
+
+const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
   ({ state, data }) => {
@@ -53,6 +44,13 @@ export default define.page<typeof handler>(
         <h1 class="font-semibold text-3xl text-slate-600 leading-relaxed tracking-wider">
           Login to e91Students
         </h1>
+        {GROUPME_AUTH_REDIRECT_URL}
+        {GROUPME_AUTH_REDIRECT_URL &&
+          (
+            <a href={GROUPME_AUTH_REDIRECT_URL}>
+              Login with GroupMe
+            </a>
+          )}
         <form
           method="post"
           action="/api/login"
