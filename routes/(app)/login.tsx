@@ -1,12 +1,7 @@
 import { page } from "fresh";
 import { define, updateErrors } from "../../utils.ts";
+import { Db } from "../../utilities/Database.ts";
 
-interface LoginInfo {
-  username?: string;
-  password?: string;
-}
-
-// export const handler: Handler<LoginInfo, AppState> = async (req, ctx) => {
 export const handler = define.handlers({
   async GET({ req, state }) {
     // check if token exists for first time sign-in
@@ -15,26 +10,23 @@ export const handler = define.handlers({
     if (!possibleToken) return page(); // skip if it doesn't
 
     // token exists, attempt to grab from db
-    const tokenUrl = new URL("/api/prefill", req.url);
-    const loginDetails = await fetch(tokenUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: possibleToken }),
-    });
+    const kv = await Db.kv();
+    const { value: loginInfo } = await kv.get<
+      { username: string; password: string }
+    >(["tokens", possibleToken]);
+
     // couldn't grab token from db
-    if (!loginDetails.ok) {
-      const error = await loginDetails.text();
-      updateErrors(state, error);
+    if (!loginInfo) {
+      updateErrors(state, `Invalid or Expired token '${possibleToken}'`);
       return page();
     }
 
     // got token from db
-    const loginInfo: LoginInfo = await loginDetails.json();
     return page({ loginInfo });
   },
 });
 
-const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
+const GROUPME_AUTH_REDIRECT_URL = null; //Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
   ({ state, data }) => {
