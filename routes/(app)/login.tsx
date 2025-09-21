@@ -10,12 +10,15 @@ export const handler = define.handlers({
     const url = new URL(req.url);
     const possibleToken = url.searchParams.get("token");
     if (!possibleToken) return page(); // skip if it doesn't
+    console.log(possibleToken);
 
     // token exists, attempt to grab from db
     const kv = await Db.kv();
-    const { value } = await kv.get<
+    const tokenResult = await kv.get<
       { userId: string }
     >(["tokens", possibleToken]);
+    console.log(tokenResult);
+    const { value } = tokenResult;
 
     // couldn't grab token from db
     if (!value) {
