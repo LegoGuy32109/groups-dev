@@ -6,8 +6,8 @@ import { Db } from "../utilities/Database.ts";
 await Deno.openKv();
 await Db.configure({
   path:
-    "https://api.deno.com/databases/ae76c420-bdfd-4d09-8a5d-502e21f7944b/connect",
-  // "https://api.deno.com/databases/6cfeb8e7-fb49-4973-bbf3-192f0e6617f5/connect",
+    // fresh dev"https://api.deno.com/databases/a731301f-58ee-4173-b4b3-93c3c19bd089/connect",
+    "https://api.deno.com/databases/35ef7446-4621-442b-bb46-27360a95ab6a/connect",
 });
 const kv = await Db.kv();
 
@@ -18,5 +18,3 @@ for await (const thing of all) {
   rows++;
 }
 console.log(`${rows} rows returned`);
-const result = await kv.get(["tokens", "ca226f2a-a543-403a-8a3d-4a8a14578440"]);
-console.log(result);
