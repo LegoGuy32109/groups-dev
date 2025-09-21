@@ -34,7 +34,7 @@ export const handler = define.handlers({
   },
 });
 
-const GROUPME_AUTH_REDIRECT_URL = null; //Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
+const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
   ({ state, data }) => {
@@ -46,11 +46,7 @@ export default define.page<typeof handler>(
         </h1>
         <div class="bg-slate-600 rounded-md p-5 font-semibold shadow-lg shadow-slate-900/90">
           {GROUPME_AUTH_REDIRECT_URL
-            ? (
-              <a href={GROUPME_AUTH_REDIRECT_URL}>
-                Login with GroupMe
-              </a>
-            )
+            ? <GroupmeLogin />
             : <Form username={username} password={password} />}
         </div>
         <p class="text-red-700 mt-2 font-mono">
@@ -60,6 +56,23 @@ export default define.page<typeof handler>(
     );
   },
 );
+
+function GroupmeLogin() {
+  return (
+    <a href={GROUPME_AUTH_REDIRECT_URL}>
+      <div class="flex items-center gap-4 bg-[#1850b6] rounded-3xl p-2">
+        <img
+          alt="groupme logo"
+          width="100"
+          height="100"
+          class="p-1"
+          src="https://web.groupme.com/images/svg-icons/groupme-logo-base.svg"
+        />
+        <p class="text-white font-medium mr-4">Login with GroupMe</p>
+      </div>
+    </a>
+  );
+}
 
 function Form(
   { visible = true, username, password }: {
