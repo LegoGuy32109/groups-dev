@@ -144,11 +144,17 @@ export async function groupmeLogin(
 
   let userId = "";
   // if this is the first time logging in, a userId is supplied
-  console.log("should i?", options);
   if (options?.userId) {
     userId = options.userId;
+    const kv = await Db.kv();
+    const groupmeIdSetResult = await kv.set(
+      ["groupmeIds", groupmeInfo.id],
+      userId,
+    );
+    if (!groupmeIdSetResult.ok) {
+      return Errors.make("Failed to set groupmeId");
+    }
   } else {
-    console.log("ran this");
     // find user id from groupme.id we're assuming this isn't the first time
     const userIdResult = await Db.getUserIdFromGroupmeId(groupmeInfo.id);
     if (!userIdResult.success) {

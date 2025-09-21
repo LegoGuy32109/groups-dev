@@ -1,5 +1,5 @@
 import { Head } from "fresh/runtime";
-import { define, makeRedirectResponse } from "../../utils.ts";
+import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
 import { Dates } from "../../utilities/Dates.ts";
 import { Grade } from "../../types/Grade.ts";
 import { Gender } from "../../types/Gender.ts";
@@ -10,8 +10,8 @@ import { page } from "fresh";
 export const handler = define.handlers({
   GET({ req, state }) {
     // if unauthenticated, reroute to login
-    console.log("am I auth?", state);
     if (!state.profile) {
+      updateErrors(state, "Must be authenticated");
       return makeRedirectResponse(req.headers, "/login");
     }
     return page();
