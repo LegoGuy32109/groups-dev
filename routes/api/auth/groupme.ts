@@ -1,3 +1,4 @@
+import { GroupmeIntegration } from "../../../types/entities/Groupme.ts";
 import { Cookies } from "../../../utilities/Cookies.ts";
 import { define, makeRedirectResponse } from "../../../utils.ts";
 
@@ -32,17 +33,17 @@ export const handler = define.handlers({
       return makeRedirectResponse(headers, "/login");
     }
 
-    // check if there is a
-
-    // groupme login valid, save token to cookie and redirect to home
-    // middleware will determine a Auth cookie isn't present but token is
-    // and apply login logic to set a
     Cookies.clear(headers, Cookies.Auth);
+    const groupmeIntegration: GroupmeIntegration = {
+      id: responseData.id,
+      accessToken: access_token,
+      info: responseData,
+    };
     Cookies.set({
       headers,
       cookie: {
         name: Cookies.Groupme,
-        value: access_token,
+        value: JSON.stringify(groupmeIntegration),
       },
     });
     return makeRedirectResponse(headers);

@@ -8,6 +8,7 @@ export const handler = define.handlers({
     const sessionId = Cookies.get(headers, Cookies.Auth);
     if (sessionId) {
       const removeResult = await Db.removeSession(sessionId);
+      console.log("deleted", sessionId);
       if (!removeResult.success) {
         Cookies.set({
           headers,
@@ -21,6 +22,6 @@ export const handler = define.handlers({
       }
     }
     Cookies.clear(headers, Cookies.Auth);
-    return makeRedirectResponse(headers);
+    return makeRedirectResponse(headers, "/login");
   },
 });

@@ -4,9 +4,13 @@ export class Cookies {
   static Error = "e91-students-error";
   static Auth = "e91-students-auth";
   static Groupme = "e91-students-groupme"; // groupme access token
+  static Token = "e91-students-token"; // userId to assign to groupme account
 
-  static clear(headers: Headers, cookieName: string) {
-    deleteCookie(headers, cookieName, { path: "/" });
+  static clear(headers: Headers, cookieName: string | Array<string>) {
+    const cookieNames = Array.isArray(cookieName) ? cookieName : [cookieName];
+    for (const name of cookieNames) {
+      deleteCookie(headers, name, { path: "/" });
+    }
   }
 
   static get(
@@ -58,12 +62,12 @@ export class Cookies {
 
   static setErrors(
     headers: Headers,
-    errors: Array<string>,
+    errors: string | Array<string>,
   ): Headers {
     return Cookies.set({
       cookie: {
         name: Cookies.Error,
-        value: JSON.stringify(errors),
+        value: JSON.stringify(Array.isArray(errors) ? errors : [errors]),
         maxAge: 20,
       },
       headers,

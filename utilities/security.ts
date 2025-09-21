@@ -1,9 +1,9 @@
 import { UserAgent } from "@std/http";
-import { Authentication } from "../types/entities/Authentication.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import { Session } from "../types/entities/Session.ts";
 import { Db } from "./Database.ts";
 import { Dates } from "./Dates.ts";
+import { Errors } from "./Errors.ts";
 
 export type AsyncResult<T = void> = Promise<Result<T>>;
 export type Result<T = void> = T extends void
@@ -62,65 +62,53 @@ export async function getPbkdf2Hash(
 }
 
 export async function signup(
-  username: string,
-  password: string,
+  firstName: string,
+  lastName: string,
 ): AsyncResult<{ userId: string; token: string }> {
   const kv = await Db.kv();
-
-  const usernameKey = ["usernames", username];
-  const { value: existingId } = await kv.get(usernameKey);
-  if (existingId) {
-    return { success: false, errors: ["User already exists."] };
-  }
 
   const newUserId = crypto.randomUUID();
 
   // generate 16 bits of salt
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-
-  const derivedKey = await getPbkdf2Hash(password, salt);
-
+  // const salt = crypto.getRandomValues(new Uint8Array(16));
+  //
+  // const derivedKey = await getPbkdf2Hash(password, salt);
+  //
   const nowIso = Dates.getNowIso();
 
-  const userAuthRecord: Authentication = {
-    algo: "PBKDF2-SHA256",
-    iterations: HASHING_ITERATIONS,
-    saltB64: toBase64(salt),
-    hashB64: toBase64(derivedKey),
-    createdOn: nowIso,
-    createdBy: "",
-    updatedOn: "",
-    updatedBy: "",
-  };
+  // const userAuthRecord: Authentication = {
+  //   algo: "PBKDF2-SHA256",
+  //   iterations: HASHING_ITERATIONS,
+  //   saltB64: toBase64(salt),
+  //   hashB64: toBase64(derivedKey),
+  //   createdOn: nowIso,
+  //   createdBy: "",
+  //   updatedOn: "",
+  //   updatedBy: "",
+  // };
 
   const userProfileRecord: Profile = {
-    username,
+    firstName,
+    lastName,
     createdOn: nowIso,
     updatedOn: nowIso,
     createdBy: "system",
     updatedBy: "system",
   };
 
-  const userAuthKey = ["users", newUserId, "auth"];
+  // const userAuthKey = ["users", newUserId, "auth"];
   const userProfileKey = ["users", newUserId, "profile"];
 
   const prefillToken = crypto.randomUUID();
   const prefillKey = ["tokens", prefillToken];
-  // In 28 days this token record will expire
-  const expireIn = 28 * 24 * 60 * 60 * 1000;
+  // In 4 days this token record will expire
+  const expireIn = 4 * 24 * 60 * 60 * 1000;
 
   const createUserResponse = await kv.atomic()
-    // ensure the user does not exist
-    .check({ key: userAuthKey, versionstamp: null })
-    // ensure username isn't taken
-    .check({ key: usernameKey, versionstamp: null })
-    .set(userAuthKey, userAuthRecord)
     .set(userProfileKey, userProfileRecord)
-    // provide lookup for username -> userId
-    .set(usernameKey, newUserId)
     // create temporary token for login prefill link
     .check({ key: prefillKey, versionstamp: null })
-    .set(prefillKey, { username, password }, { expireIn })
+    .set(prefillKey, { userId: newUserId }, { expireIn })
     .commit();
 
   if (!createUserResponse.ok) {
@@ -133,16 +121,48 @@ export async function signup(
   return { success: true, userId: newUserId, token: prefillToken };
 }
 
+interface GroupmeLoginOptions {
+  // if a user is logging in for the first time, they should have a userId to connect their groupme account
+  // if not, the groupme id should be in the system
+  userId?: string;
+  userAgent?: UserAgent;
+}
 export async function groupmeLogin(
-  groupmeId: string,
-  userAgent?: UserAgent,
+  groupmeAccessToken: string,
+  options?: GroupmeLoginOptions,
 ): AsyncResult<{ sessionId: string }> {
-  // find user id from groupme.id, if user exists
-  const userIdResult = await Db.getUserIdFromGroupmeId(groupmeId);
-  if (!userIdResult.success) {
-    return userIdResult;
+  // get groupme id from access token
+  const groupmeInfoResponse = await fetch(
+    `https://api.groupme.com/v3/users/me?token=${groupmeAccessToken}`,
+  );
+  const groupmeInfo = (await groupmeInfoResponse.json()).response;
+  if (!groupmeInfoResponse.ok) {
+    return Errors.make(
+      `Failed to get groupme user id: ${groupmeInfoResponse.text()}`,
+    );
   }
-  const { userId } = userIdResult;
+
+  let userId = "";
+  // if this is the first time logging in, a userId is supplied
+  console.log("should i?", options);
+  if (options?.userId) {
+    userId = options.userId;
+  } else {
+    console.log("ran this");
+    // find user id from groupme.id we're assuming this isn't the first time
+    const userIdResult = await Db.getUserIdFromGroupmeId(groupmeInfo.id);
+    if (!userIdResult.success) {
+      return userIdResult;
+    }
+    userId = userIdResult.userId;
+  }
+
+  // update existing user with groupme integration
+  Db.updateUserProfileGroupme(userId, {
+    id: groupmeInfo.id,
+    accessToken: groupmeAccessToken,
+    info: groupmeInfo,
+  });
 
   // create a new session, it's id will be the auth cookie
   const newSessionId = crypto.randomUUID();
@@ -153,7 +173,7 @@ export async function groupmeLogin(
     updatedOn: nowIso,
     createdBy: "system",
     updatedBy: "system",
-    userAgent,
+    userAgent: options?.userAgent,
   };
   const addSessionResult = await Db.addNewSession(
     newSessionId,
@@ -166,61 +186,62 @@ export async function groupmeLogin(
   return { success: true, sessionId: newSessionId };
 }
 
-export async function login(
-  username: string,
-  password: string,
-  userAgent?: UserAgent,
-): AsyncResult<{ sessionId: string }> {
-  // find user id from username
-  const userIdResult = await Db.getUserIdFromUsername(username);
-  if (!userIdResult.success) {
-    return userIdResult;
-  }
-  const { userId } = userIdResult;
-  // find auth from user id
-  const userResult = await Db.getUser(userId);
-  if (!userResult.success) {
-    return userResult;
-  }
-  const { authentication } = userResult;
-  // hash password with salt from auth record
-  const { saltB64, hashB64 } = authentication;
-  const correctPasswordHash = fromBase64(hashB64);
-  const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
-  // compare given password hash with hash in auth record
-  const isCorrectPassword = timingSafeEqual(
-    correctPasswordHash,
-    givenPasswordHash,
-  );
-  if (!isCorrectPassword) {
-    return {
-      success: false,
-      errors: [`incorrect password for user '${username}'`],
-    };
-  }
-  // if hashes match create a new session, it's id will be the auth cookie
-  const newSessionId = crypto.randomUUID();
-  const nowIso = Dates.getNowIso();
-  const newSessionRecord: Session = {
-    userId,
-    createdOn: nowIso,
-    updatedOn: nowIso,
-    createdBy: "system",
-    updatedBy: "system",
-    userAgent,
-  };
-  const addSessionResult = await Db.addNewSession(
-    newSessionId,
-    newSessionRecord,
-  );
-  if (!addSessionResult.success) {
-    return addSessionResult;
-  }
-  // return cookie for response in other function
-  return { success: true, sessionId: newSessionId };
-}
-export async function logout(
-  sessionId: string,
-): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
-  return await Db.removeSession(sessionId);
-}
+// export async function login(
+//   username: string,
+//   password: string,
+//   userAgent?: UserAgent,
+// ): AsyncResult<{ sessionId: string }> {
+//   // find user id from username
+//   const userIdResult = await Db.getUserIdFromUsername(username);
+//   if (!userIdResult.success) {
+//     return userIdResult;
+//   }
+//   const { userId } = userIdResult;
+//   // find auth from user id
+//   const userResult = await Db.getUserProfile(userId);
+//   if (!userResult.success) {
+//     return userResult;
+//   }
+//   const { authentication } = userResult;
+//   // hash password with salt from auth record
+//   const { saltB64, hashB64 } = authentication;
+//   const correctPasswordHash = fromBase64(hashB64);
+//   const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
+//   // compare given password hash with hash in auth record
+//   const isCorrectPassword = timingSafeEqual(
+//     correctPasswordHash,
+//     givenPasswordHash,
+//   );
+//   if (!isCorrectPassword) {
+//     return {
+//       success: false,
+//       errors: [`incorrect password for user '${username}'`],
+//     };
+//   }
+//   // if hashes match create a new session, it's id will be the auth cookie
+//   const newSessionId = crypto.randomUUID();
+//   const nowIso = Dates.getNowIso();
+//   const newSessionRecord: Session = {
+//     userId,
+//     createdOn: nowIso,
+//     updatedOn: nowIso,
+//     createdBy: "system",
+//     updatedBy: "system",
+//     userAgent,
+//   };
+//   const addSessionResult = await Db.addNewSession(
+//     newSessionId,
+//     newSessionRecord,
+//   );
+//   if (!addSessionResult.success) {
+//     return addSessionResult;
+//   }
+//   // return cookie for response in other function
+//   return { success: true, sessionId: newSessionId };
+// }
+//
+// export async function logout(
+//   sessionId: string,
+// ): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
+//   return await Db.removeSession(sessionId);
+// }

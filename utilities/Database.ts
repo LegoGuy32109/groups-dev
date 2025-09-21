@@ -1,6 +1,7 @@
-import { Authentication } from "../types/entities/Authentication.ts";
+import { GroupmeIntegration } from "../types/entities/Groupme.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import { Session } from "../types/entities/Session.ts";
+import { Dates } from "./Dates.ts";
 import { Errors } from "./Errors.ts";
 import { AsyncResult } from "./security.ts";
 
@@ -48,14 +49,6 @@ export class Db {
     return await Array.fromAsync(kv.list({ prefix: ["users"] }));
   }
 
-  static async getUsernames() {
-    const kv = await Db.kv();
-
-    return await Array.fromAsync(
-      kv.list<string>({ prefix: ["usernames"] }),
-    );
-  }
-
   static async getGroupmeIds() {
     const kv = await Db.kv();
 
@@ -77,22 +70,9 @@ export class Db {
     return { success: true, userId };
   }
 
-  static async getUserIdFromUsername(
-    username: string,
-  ): AsyncResult<{ userId: string }> {
-    const kv = await Db.kv();
-
-    const userId = (await kv.get<string>(["usernames", username])).value;
-    if (!userId) {
-      return Errors.make(`No userId found for '${username}'`);
-    }
-
-    return { success: true, userId };
-  }
-
-  static async getUser(
+  static async getUserProfile(
     userId: string,
-  ): AsyncResult<{ profile: Profile; authentication: Authentication }> {
+  ): AsyncResult<{ profile: Profile }> {
     const kv = await Db.kv();
 
     const userRecords = await Array.fromAsync(
@@ -101,17 +81,45 @@ export class Db {
     const userProfile = userRecords.find((record) =>
       record.key.at(-1) === "profile"
     )?.value as Profile | undefined;
-    const userAuth = userRecords.find((record) => record.key.at(-1) === "auth")
-      ?.value as Authentication | undefined;
 
-    if (!userProfile || !userAuth) {
+    if (!userProfile) {
       const errors = [];
       !userProfile && errors.push(`No profile found for '${userId}'`);
-      !userAuth && errors.push(`No authentication found for '${userId}'`);
       return { success: false, errors };
     }
 
-    return { success: true, profile: userProfile, authentication: userAuth };
+    return { success: true, profile: userProfile };
+  }
+
+  static async updateUserProfileGroupme(
+    userId: string,
+    groupme: GroupmeIntegration,
+  ): AsyncResult<{ profile: Profile }> {
+    const kv = await Db.kv();
+    const profileKey = [
+      "users",
+      userId,
+      "profile",
+    ];
+
+    const { value: userProfile } = await kv.get<Profile>(profileKey);
+    if (!userProfile) {
+      return Errors.make(`User 'profile' record did not exist for '${userId}'`);
+    }
+
+    const newProfile: Profile = {
+      ...userProfile,
+      groupme,
+      updatedBy: "system",
+      updatedOn: Dates.getNowIso(),
+    };
+
+    const profileUpdate = await kv.set(profileKey, newProfile);
+    if (!profileUpdate.ok) {
+      return Errors.make("Failed to update user 'profile' record");
+    }
+
+    return { success: true, profile: newProfile };
   }
 
   static async deleteUser(
@@ -147,19 +155,11 @@ export class Db {
       groupmeRecord = await kv.get<string>(groupmeKey);
     }
 
-    // delete username in username lookup table
-    const username = profile.username;
-    const usernameKey = ["usernames", username];
-
-    // get username record to indicate all deleted records
-    const usernameRecord = await kv.get(usernameKey);
-
     const deleteResponse = await deleteTransaction
-      .delete(usernameKey)
       .commit();
     if (!deleteResponse.ok) {
       return Errors.make(
-        `Failed to delete both username '${username}' and userId '${userId}' from database.`,
+        `Failed to delete userId '${userId}' records from database.`,
       );
     }
 
@@ -167,7 +167,6 @@ export class Db {
       success: true,
       deletedRecords: [
         ...userRecords,
-        usernameRecord.value ? usernameRecord : "<no username record found>",
         groupmeRecord?.value ? groupmeRecord : "<no groupmeId record found>",
       ],
     };
@@ -320,6 +319,8 @@ export class Db {
     await Promise.all([
       this.deleteAllDataInTable("users"),
       this.deleteAllDataInTable("usernames"),
+      this.deleteAllDataInTable("sessions"),
+      this.deleteAllDataInTable("tokens"),
     ]);
   }
 }
