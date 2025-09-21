@@ -1,8 +1,14 @@
 import { useSignal } from "@preact/signals";
 import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
+import { Db } from "../utilities/Database.ts";
+import { useEffect } from "preact/hooks";
+import { Attendance } from "../types/entities/Attendance.ts";
 
 export default function VerticalCounter(
-  { count: countParam }: { count: number },
+  { group, userId }: {
+    group: string;
+    userId?: string;
+  },
 ) {
   const className = `
      w-full 
@@ -22,16 +28,46 @@ export default function VerticalCounter(
      focus:outline-none
   `;
 
-  const count = useSignal(countParam);
+  const count = useSignal(0);
+
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `/api/attendance/stream?group=${encodeURIComponent(group)}`,
+    );
+    eventSource.onmessage = (event) => {
+      const attendance: Attendance = JSON.parse(event.data);
+      count.value = attendance.count;
+    };
+    return () => eventSource.close();
+  }, []);
 
   function decrementCount() {
     if (count.value > 0) {
       count.value += -1;
+      fetch("/api/attendance/stream", {
+        method: "POST",
+        body: JSON.stringify({
+          delta: -1,
+          userId,
+          group,
+        }),
+      });
     }
   }
 
   function incrementCount() {
     count.value += 1;
+    fetch("/api/attendance/stream", {
+      method: "POST",
+      body: JSON.stringify({
+        delta: 1,
+        userId,
+        group,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   // INFO: this activates the active property of buttons on ios so animations look nice

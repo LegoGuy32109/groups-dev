@@ -1,13 +1,26 @@
+import { page } from "fresh";
 import VerticalCounter from "../../../islands/VerticalCounter.tsx";
+import { Gender } from "../../../types/Gender.ts";
+import { Grade } from "../../../types/Grade.ts";
 import { getGroupColor } from "../../../utilities/groupUtils.ts";
-import { define } from "../../../utils.ts";
+import { define, makeRedirectResponse } from "../../../utils.ts";
 
-export default define.page(function Page({ params }) {
-  const group = decodeURIComponent(params.group);
-  const count = 0;
+export const handler = define.handlers({
+  GET(ctx) {
+    const groups = Object.values(Grade).flatMap((grade) =>
+      Object.values(Gender).map((gender) =>
+        `${grade} ${gender === Gender.Male ? "Boys" : "Girls"}`
+      )
+    );
+    const group = decodeURIComponent(ctx.params.group);
+    if (!groups.includes(group)) {
+      return makeRedirectResponse(new Headers());
+    }
+    return page({ group });
+  },
+});
 
-  //TODO: check if group exists or user has permission to log attendance for a new group
-
+export default define.page(function Page({ state, data: { group } }) {
   return (
     <div class="p-6 flex flex-col items-center w-full grow">
       <a
@@ -17,7 +30,10 @@ export default define.page(function Page({ params }) {
       >
         {group}
       </a>
-      <VerticalCounter count={count} />
+      <VerticalCounter
+        group={group}
+        userId={state.session?.userId}
+      />
     </div>
   );
 });

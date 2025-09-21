@@ -1,14 +1,16 @@
 import { App, staticFiles } from "fresh";
 import { define, type State } from "./utils.ts";
+import { Dates } from "./utilities/Dates.ts";
 
 export const app = new App<State>();
 
 app.use(staticFiles());
 
-// Pass a shared value from a middleware
-// app.use(async (ctx) => {
-//   const { req, state } = ctx;
-// });
+app.use((ctx) => {
+  const { state } = ctx;
+  state.today = Dates.getMonthDay();
+  return ctx.next();
+});
 
 // this is the same as the /api/:name route defined via a file. feel free to delete this!
 // app.get("/api2/:name", (ctx) => {

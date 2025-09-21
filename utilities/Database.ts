@@ -1,3 +1,4 @@
+import { Attendance } from "../types/entities/Attendance.ts";
 import { GroupmeIntegration } from "../types/entities/Groupme.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import { Session } from "../types/entities/Session.ts";
@@ -321,6 +322,57 @@ export class Db {
       this.deleteAllDataInTable("usernames"),
       this.deleteAllDataInTable("sessions"),
       this.deleteAllDataInTable("tokens"),
+      this.deleteAllDataInTable("attendance"),
     ]);
+  }
+
+  static async updateAttendance(
+    group: string,
+    delta: number,
+    causedBy?: string, // guid
+  ): AsyncResult {
+    const kv = await Db.kv();
+    const today = Dates.getMonthDay();
+    const now = Dates.getNowIso();
+
+    const key = ["attendance", group, today];
+    const existsValue = await kv.get<Attendance>(key);
+
+    // first counter
+    if (!existsValue.value) {
+      if (delta > 0) {
+        const result = await kv.atomic()
+          .check({ key, versionstamp: null })
+          .set(
+            key,
+            {
+              count: delta,
+              createdOn: now,
+              updatedOn: now,
+              createdBy: causedBy ?? "system",
+              updatedBy: causedBy ?? "system",
+            } satisfies Attendance,
+          ).commit();
+        if (!result.ok) {
+          return Errors.make("Failed to create new value");
+        }
+      }
+      return { success: true };
+    }
+    // counter already exists
+    const other = await kv.atomic()
+      .set(
+        key,
+        {
+          ...existsValue.value,
+          count: Math.max(0, existsValue.value.count + delta),
+          updatedOn: now,
+          updatedBy: causedBy ?? "system",
+        } satisfies Attendance,
+      ).commit();
+    if (!other.ok) {
+      return Errors.make("Failed to create new value");
+    }
+    return { success: true };
   }
 }

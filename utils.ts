@@ -4,7 +4,7 @@ import { Session } from "./types/entities/Session.ts";
 
 // This specifies the type of "ctx.state"
 export interface State {
-  shared: string;
+  today: string;
   session?: Session;
   profile?: Profile;
   errors?: Array<string>;

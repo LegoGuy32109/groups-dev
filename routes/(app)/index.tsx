@@ -1,6 +1,5 @@
 import { Head } from "fresh/runtime";
 import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
-import { Dates } from "../../utilities/Dates.ts";
 import { Grade } from "../../types/Grade.ts";
 import { Gender } from "../../types/Gender.ts";
 import { PersonalVerse } from "../../components/PersonalVerse.tsx";
@@ -20,7 +19,7 @@ export const handler = define.handlers({
 
 export default define.page(
   function Home({ state }) {
-    const dateTonight = Dates.getMonthDay();
+    const dateTonight = state.today;
     const groups = Object.values(Grade).flatMap((grade) =>
       Object.values(Gender).map((gender) =>
         `${grade} ${gender === Gender.Male ? "Boys" : "Girls"}`
