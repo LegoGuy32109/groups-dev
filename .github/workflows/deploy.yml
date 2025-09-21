@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: trying-freshy-fresh-2.0
+    branches: dev
   pull_request:
-    branches: trying-freshy-fresh-2.0
+    branches: dev
 
 jobs:
   deploy:
@@ -32,3 +32,5 @@ jobs:
           project: "dev-e91students"
           entrypoint: "./_fresh/server.js"
           root: ""
+          
+          exclude: .env*
