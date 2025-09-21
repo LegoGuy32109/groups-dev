@@ -5,25 +5,27 @@ import { define } from "../../../utils.ts";
 
 export const handler = define.handlers({
   async GET(ctx) {
-    const encodedGroup = new URL(ctx.req.url).searchParams.get("group");
-    if (!encodedGroup) return new Response(null, { status: 402 });
+    const encodedGroups = new URL(ctx.req.url).searchParams.get("groups");
+    if (!encodedGroups) return new Response(null, { status: 402 });
 
-    const group = decodeURIComponent(encodedGroup);
+    const groups: Array<string> =
+      JSON.parse(decodeURIComponent(encodedGroups)) ?? [];
     const today = Dates.getMonthDay();
     const kv = await Db.kv();
-    const key = ["attendance", group, today];
+    const keys = groups.map((group) => ["attendance", group, today]);
 
-    const stream = kv.watch<Array<Attendance>>([key]).getReader();
+    const stream = kv.watch<Array<Attendance>>(keys).getReader();
     const body = new ReadableStream({
       async start(controller) {
         while (true) {
           if ((await stream.read()).done) {
             return;
           }
-          const value = (await kv.get<Attendance>(key)).value;
+          const values = (await kv.getMany<Array<Attendance>>(keys))
+            .filter((value) => !!value);
           controller.enqueue(
             new TextEncoder().encode(
-              `data: ${JSON.stringify(value ?? "")}\n\n`,
+              `data: ${JSON.stringify(values)}\n\n`,
             ),
           );
         }
@@ -45,7 +47,6 @@ export const handler = define.handlers({
     const requestData = await ctx.req.json();
     const { group, userId, delta } = requestData;
     if (group && userId && Number.isInteger(delta)) {
-      console.log(requestData);
       await Db.updateAttendance(group, delta, userId);
       return new Response(null, { status: 204 });
     }

@@ -1,6 +1,5 @@
 import { useSignal } from "@preact/signals";
 import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
-import { Db } from "../utilities/Database.ts";
 import { useEffect } from "preact/hooks";
 import { Attendance } from "../types/entities/Attendance.ts";
 
@@ -32,18 +31,24 @@ export default function VerticalCounter(
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `/api/attendance/stream?group=${encodeURIComponent(group)}`,
+      `/api/attendance/stream?groups=${
+        encodeURIComponent(JSON.stringify([group]))
+      }`,
     );
+
     eventSource.onmessage = (event) => {
-      const attendance: Attendance = JSON.parse(event.data);
-      count.value = attendance.count;
+      const attendances: Array<Deno.KvEntry<Attendance>> = JSON.parse(
+        event.data,
+      );
+      for (const attendance of attendances) {
+        count.value = attendance.value.count;
+      }
     };
     return () => eventSource.close();
   }, []);
 
   function decrementCount() {
     if (count.value > 0) {
-      count.value += -1;
       fetch("/api/attendance/stream", {
         method: "POST",
         body: JSON.stringify({
@@ -56,7 +61,6 @@ export default function VerticalCounter(
   }
 
   function incrementCount() {
-    count.value += 1;
     fetch("/api/attendance/stream", {
       method: "POST",
       body: JSON.stringify({
