@@ -9,7 +9,7 @@ export const handler = define.handlers({
     // if unauthenticated, reroute to login
     if (!state.profile) {
       updateErrors(state, "Must be authenticated");
-      return makeRedirectResponse(req.headers, "/login");
+      return makeRedirectResponse(new Headers(req.headers), "/login");
     }
     return page();
   },

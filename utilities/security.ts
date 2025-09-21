@@ -64,6 +64,7 @@ export async function getPbkdf2Hash(
 export async function signup(
   firstName: string,
   lastName: string,
+  defaultGroup?: string,
 ): AsyncResult<{ userId: string; token: string }> {
   const kv = await Db.kv();
 
@@ -90,6 +91,7 @@ export async function signup(
   const userProfileRecord: Profile = {
     firstName,
     lastName,
+    defaultGroup,
     createdOn: nowIso,
     updatedOn: nowIso,
     createdBy: "system",

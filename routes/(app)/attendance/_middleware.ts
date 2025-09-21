@@ -4,7 +4,7 @@ export const handler = define.middleware((ctx) => {
   // if unauthenticated, reroute to login
   if (!ctx.state.profile) {
     updateErrors(ctx.state, "Must be authenticated");
-    return makeRedirectResponse(ctx.req.headers, "/login");
+    return makeRedirectResponse(new Headers(ctx.req.headers), "/login");
   }
   return ctx.next();
 });

@@ -4,7 +4,7 @@ import { define, makeRedirectResponse } from "../../../utils.ts";
 
 export const handler = define.handlers({
   async GET(ctx) {
-    const headers = ctx.req.headers;
+    const headers = new Headers(ctx.req.headers);
 
     const access_token = ctx.url.searchParams.get("access_token");
     if (!access_token) {
