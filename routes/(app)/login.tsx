@@ -34,63 +34,25 @@ export const handler = define.handlers({
   },
 });
 
-const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
+const GROUPME_AUTH_REDIRECT_URL = null; //Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
   ({ state, data }) => {
     const { username, password } = data?.loginInfo ?? {};
     return (
       <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center justify-center overflow-auto">
-        <h1 class="font-semibold text-3xl text-slate-600 leading-relaxed tracking-wider">
+        <h1 class="font-semibold text-3xl text-slate-600 leading-relaxed tracking-wider text-shadow-md text-shadow-slate-900">
           Login to e91Students
         </h1>
-        {GROUPME_AUTH_REDIRECT_URL}
-        {GROUPME_AUTH_REDIRECT_URL &&
-          (
-            <a href={GROUPME_AUTH_REDIRECT_URL}>
-              Login with GroupMe
-            </a>
-          )}
-        <form
-          method="post"
-          action="/api/login"
-          class="flex flex-col bg-slate-600 rounded-md gap-2 p-5 font-semibold shadow-lg shadow-slate-900/90"
-        >
-          <label class="text-slate-300 flex justify-between gap-4">
-            Username:{" "}
-            <input
-              type="text"
-              name="username"
-              autocomplete="username"
-              value={username}
-              required
-              class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
-            />
-          </label>
-          <label class="text-slate-300 flex justify-between gap-4">
-            Password:{" "}
-            <input
-              type="password"
-              name="password"
-              value={password}
-              autocomplete="current-password"
-              required
-              class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
-            />
-          </label>
-          <div class="flex justify-between items-center">
-            <a href="/" class="underline text-slate-800">
-              Forgot Password?
-            </a>
-            <button
-              type="submit"
-              class="rounded-full text-slate-200 m-1 p-2 min-w-20
-          bg-gradient-to-r from-sky-600 to-sky-300 bg-[length:150%_150%] transition-[background-position] duration-300 hover:bg-[position:90%_90%]"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+        <div class="bg-slate-600 rounded-md p-5 font-semibold shadow-lg shadow-slate-900/90">
+          {GROUPME_AUTH_REDIRECT_URL
+            ? (
+              <a href={GROUPME_AUTH_REDIRECT_URL}>
+                Login with GroupMe
+              </a>
+            )
+            : <Form username={username} password={password} />}
+        </div>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
         </p>
@@ -98,3 +60,58 @@ export default define.page<typeof handler>(
     );
   },
 );
+
+function Form(
+  { visible = true, username, password }: {
+    visible?: boolean;
+    username?: string;
+    password?: string;
+  },
+) {
+  if (!visible) {
+    return;
+  }
+
+  return (
+    <form
+      method="post"
+      action="/api/login"
+      class="flex flex-col gap-2"
+    >
+      <label class="text-slate-300 flex justify-between gap-4">
+        Username:{" "}
+        <input
+          type="text"
+          name="username"
+          autocomplete="username"
+          value={username}
+          required
+          class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
+        />
+      </label>
+      <label class="text-slate-300 flex justify-between gap-4">
+        Password:{" "}
+        <input
+          type="password"
+          name="password"
+          value={password}
+          autocomplete="current-password"
+          required
+          class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
+        />
+      </label>
+      <div class="flex justify-between items-center">
+        <a href="/" class="underline text-slate-800">
+          Forgot Password?
+        </a>
+        <button
+          type="submit"
+          class="rounded-full text-slate-200 m-1 p-2 min-w-20
+          bg-gradient-to-r from-sky-600 to-sky-300 bg-[length:150%_150%] transition-[background-position] duration-300 hover:bg-[position:90%_90%]"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  );
+}
