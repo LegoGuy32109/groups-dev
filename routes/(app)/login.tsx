@@ -11,6 +11,11 @@ export const handler = define.handlers({
     const possibleToken = url.searchParams.get("token");
     if (!possibleToken) return page(); // skip if it doesn't
     console.log(possibleToken);
+    console.log(
+      Deno.env.get("DENO_KV_ACCESS_TOKEN"),
+      "deno access",
+      possibleToken,
+    );
 
     // token exists, attempt to grab from db
     const kv = await Db.kv();
