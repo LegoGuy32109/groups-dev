@@ -33,4 +33,4 @@ jobs:
           entrypoint: "./_fresh/server.js"
           root: ""
           
-          exclude: .env*
+          
