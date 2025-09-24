@@ -25,6 +25,7 @@
     "jsr:@std/http@^1.0.15": "1.0.20",
     "jsr:@std/http@^1.0.20": "1.0.20",
     "jsr:@std/internal@^1.0.10": "1.0.10",
+    "jsr:@std/json@^1.0.2": "1.0.2",
     "jsr:@std/jsonc@1": "1.0.2",
     "jsr:@std/media-types@1": "1.1.0",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
@@ -40,23 +41,28 @@
     "npm:@opentelemetry/api@^1.9.0": "1.9.0",
     "npm:@preact/signals@^2.2.1": "2.3.1_preact@10.27.2",
     "npm:@preact/signals@^2.3.1": "2.3.1_preact@10.27.2",
-    "npm:@prefresh/vite@^2.4.8": "2.4.10_preact@10.27.2_vite@7.1.7__picomatch@4.0.3",
-    "npm:@tailwindcss/vite@^4.1.13": "4.1.13_vite@7.1.7__picomatch@4.0.3",
+    "npm:@prefresh/vite@^2.4.8": "2.4.10_preact@10.27.2_vite@7.1.7__picomatch@4.0.3_@types+node@24.2.0",
+    "npm:@tailwindcss/vite@^4.1.13": "4.1.13_vite@7.1.7__picomatch@4.0.3_@types+node@24.2.0",
+    "npm:@types/node@*": "24.2.0",
     "npm:esbuild-wasm@0.25.7": "0.25.7",
     "npm:esbuild@0.25.7": "0.25.7",
+    "npm:esbuild@~0.25.5": "0.25.7",
     "npm:preact-render-to-string@^6.5.11": "6.6.1_preact@10.27.2",
     "npm:preact@^10.22.1": "10.27.2",
     "npm:preact@^10.27.0": "10.27.2",
     "npm:preact@^10.27.2": "10.27.2",
+    "npm:rollup@^4.50.0": "4.52.2",
     "npm:tailwindcss@^4.1.13": "4.1.13",
-    "npm:vite@^7.1.7": "7.1.7_picomatch@4.0.3"
+    "npm:vite@^7.1.4": "7.1.7_picomatch@4.0.3_@types+node@24.2.0",
+    "npm:vite@^7.1.7": "7.1.7_picomatch@4.0.3_@types+node@24.2.0"
   },
   "jsr": {
     "@deno/esbuild-plugin@1.2.0": {
       "integrity": "04ddd0fca9416d8a2866263928a53b9d5ed08dfca064d64504a0aaf9800c709e",
       "dependencies": [
         "jsr:@deno/loader@~0.3.3",
-        "jsr:@std/path@^1.1.1"
+        "jsr:@std/path@^1.1.1",
+        "npm:esbuild@~0.25.5"
       ]
     },
     "@deno/loader@0.3.5": {
@@ -85,8 +91,8 @@
         "jsr:@std/uuid",
         "npm:@opentelemetry/api",
         "npm:@preact/signals@^2.2.1",
-        "npm:esbuild",
         "npm:esbuild-wasm",
+        "npm:esbuild@0.25.7",
         "npm:preact-render-to-string",
         "npm:preact@^10.27.0"
       ]
@@ -103,7 +109,9 @@
         "npm:@babel/core",
         "npm:@babel/preset-react",
         "npm:@mjackson/node-fetch-server",
-        "npm:@prefresh/vite"
+        "npm:@prefresh/vite",
+        "npm:rollup",
+        "npm:vite@^7.1.4"
       ]
     },
     "@preact-icons/common@1.1.0": {
@@ -115,7 +123,8 @@
     "@preact-icons/tb@1.0.14": {
       "integrity": "46e4f3edfdbefc4080714ffb18327a72257696d670d479b1108890345674a6e2",
       "dependencies": [
-        "jsr:@preact-icons/common"
+        "jsr:@preact-icons/common",
+        "npm:preact@^10.22.1"
       ]
     },
     "@std/assert@1.0.14": {
@@ -165,8 +174,14 @@
     "@std/internal@1.0.10": {
       "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
     },
+    "@std/json@1.0.2": {
+      "integrity": "d9e5497801c15fb679f55a2c01c7794ad7a5dfda4dd1bebab5e409cb5e0d34d4"
+    },
     "@std/jsonc@1.0.2": {
-      "integrity": "909605dae3af22bd75b1cbda8d64a32cf1fd2cf6efa3f9e224aba6d22c0f44c7"
+      "integrity": "909605dae3af22bd75b1cbda8d64a32cf1fd2cf6efa3f9e224aba6d22c0f44c7",
+      "dependencies": [
+        "jsr:@std/json"
+      ]
     },
     "@std/media-types@1.1.0": {
       "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
@@ -705,7 +720,19 @@
         "@prefresh/utils",
         "@rollup/pluginutils",
         "preact",
-        "vite"
+        "vite@7.1.7_picomatch@4.0.3"
+      ]
+    },
+    "@prefresh/vite@2.4.10_preact@10.27.2_vite@7.1.7__picomatch@4.0.3_@types+node@24.2.0": {
+      "integrity": "sha512-lt+ODASOtXRWaPplp7/DlrgAaInnQYNvcpCglQBMx2OeJPyZ4IqPRaxsK77w96mWshjYwkqTsRSHoAM7aAn0ow==",
+      "dependencies": [
+        "@babel/core",
+        "@prefresh/babel-plugin",
+        "@prefresh/core",
+        "@prefresh/utils",
+        "@rollup/pluginutils",
+        "preact",
+        "vite@7.1.7_picomatch@4.0.3_@types+node@24.2.0"
       ]
     },
     "@rollup/pluginutils@4.2.1": {
@@ -924,11 +951,26 @@
         "@tailwindcss/node",
         "@tailwindcss/oxide",
         "tailwindcss",
-        "vite"
+        "vite@7.1.7_picomatch@4.0.3"
+      ]
+    },
+    "@tailwindcss/vite@4.1.13_vite@7.1.7__picomatch@4.0.3_@types+node@24.2.0": {
+      "integrity": "sha512-0PmqLQ010N58SbMTJ7BVJ4I2xopiQn/5i6nlb4JmxzQf8zcS5+m2Cv6tqh+sfDwtIdjoEnOvwsGQ1hkUi8QEHQ==",
+      "dependencies": [
+        "@tailwindcss/node",
+        "@tailwindcss/oxide",
+        "tailwindcss",
+        "vite@7.1.7_picomatch@4.0.3_@types+node@24.2.0"
       ]
     },
     "@types/estree@1.0.8": {
       "integrity": "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="
+    },
+    "@types/node@24.2.0": {
+      "integrity": "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw==",
+      "dependencies": [
+        "undici-types"
+      ]
     },
     "baseline-browser-mapping@2.8.6": {
       "integrity": "sha512-wrH5NNqren/QMtKUEEJf7z86YjfqW/2uw3IL3/xpqZUC95SSVIFXYQeeGjL6FT/X68IROu6RMehZQS5foy2BXw==",
@@ -1271,6 +1313,9 @@
         "picomatch@4.0.3"
       ]
     },
+    "undici-types@7.10.0": {
+      "integrity": "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="
+    },
     "update-browserslist-db@1.1.3_browserslist@4.26.2": {
       "integrity": "sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==",
       "dependencies": [
@@ -1292,6 +1337,25 @@
       ],
       "optionalDependencies": [
         "fsevents"
+      ],
+      "bin": true
+    },
+    "vite@7.1.7_picomatch@4.0.3_@types+node@24.2.0": {
+      "integrity": "sha512-VbA8ScMvAISJNJVbRDTJdCwqQoAareR/wutevKanhR2/1EkoXVZVkkORaYm/tNVCjP/UDTKtcw3bAkwOUdedmA==",
+      "dependencies": [
+        "@types/node",
+        "esbuild@0.25.10",
+        "fdir",
+        "picomatch@4.0.3",
+        "postcss",
+        "rollup",
+        "tinyglobby"
+      ],
+      "optionalDependencies": [
+        "fsevents"
+      ],
+      "optionalPeers": [
+        "@types/node"
       ],
       "bin": true
     },

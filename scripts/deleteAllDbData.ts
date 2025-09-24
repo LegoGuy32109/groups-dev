@@ -1,4 +1,5 @@
-const devKv = await Deno.openKv("https://api.deno.com/databases/35ef7446-4621-442b-bb46-27360a95ab6a/connect");
+const dbToDeletePath = "https://api.deno.com/databases/35ef7446-4621-442b-bb46-27360a95ab6a/connect"
+const devKv = await Deno.openKv(dbToDeletePath);
 const iter = devKv.list({ prefix: [] });
 const deletes: Promise<void>[] = [];
 
