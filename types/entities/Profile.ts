@@ -1,5 +1,5 @@
+import { GroupmeIntegration } from "../Groupme.ts";
 import { Entity } from "./Entity.ts";
-import { GroupmeIntegration } from "./Groupme.ts";
 
 export interface Profile extends Entity {
   firstName: string;

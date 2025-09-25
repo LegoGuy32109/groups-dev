@@ -1,7 +1,7 @@
 import { Attendance } from "../types/entities/Attendance.ts";
-import { GroupmeIntegration } from "../types/entities/Groupme.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import { Session } from "../types/entities/Session.ts";
+import { GroupmeIntegration } from "../types/Groupme.ts";
 import { Dates } from "./Dates.ts";
 import { Errors } from "./Errors.ts";
 import { AsyncResult } from "./security.ts";

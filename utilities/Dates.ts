@@ -10,4 +10,9 @@ export class Dates {
       .substring(5)
       .replaceAll("-", "/");
   }
+  static fromGroupmeTemporal(temporal: GroupmeTemporal): Date {
+    return new Date(temporal * 1000);
+  }
 }
+
+export type GroupmeTemporal = number;

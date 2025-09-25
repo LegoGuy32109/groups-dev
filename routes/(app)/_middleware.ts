@@ -1,9 +1,9 @@
 import { UserAgent } from "@std/http/user-agent";
-import { GroupmeIntegration } from "../../types/entities/Groupme.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Db } from "../../utilities/Database.ts";
 import { groupmeLogin } from "../../utilities/security.ts";
 import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
+import { GroupmeIntegration } from "../../types/Groupme.ts";
 
 export const handler = define.middleware(async (ctx) => {
   const { req, state, url } = ctx;

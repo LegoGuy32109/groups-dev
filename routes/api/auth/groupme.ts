@@ -1,4 +1,4 @@
-import { GroupmeIntegration } from "../../../types/entities/Groupme.ts";
+import { GroupmeIntegration } from "../../../types/Groupme.ts";
 import { Cookies } from "../../../utilities/Cookies.ts";
 import { define, makeRedirectResponse } from "../../../utils.ts";
 
