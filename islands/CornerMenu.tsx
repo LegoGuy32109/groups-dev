@@ -2,6 +2,7 @@ import { useSignal } from "@preact/signals";
 import { TbMenu2 } from "@preact-icons/tb";
 import { State } from "../utils.ts";
 import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
+import Conditional from "../components/Conditional.tsx";
 
 export default function CornerMenu({ state }: { state: State }) {
   const overlayOpen = useSignal(false);
@@ -35,14 +36,20 @@ export default function CornerMenu({ state }: { state: State }) {
       <div class="w-[160px] h-screen bg-slate-900/90 text-slate-300
     text-3xl font-light p-3 flex flex-col gap-y-4">
         <a href="/">Home</a>
-        {/* TODO: loggedIn ? <p>Profile</p> : null */}
-        {loggedIn
-          ? (
-            <a class="text-red-300" href="/api/logout">
-              Logout
-            </a>
-          )
-          : <a href="/login">Login</a>}
+        <Conditional visible={!loggedIn}>
+          <a href="/login">Login</a>
+        </Conditional>
+        <Conditional visible={loggedIn}>
+          <a href="/profiles">
+            Profiles
+          </a>
+        </Conditional>
+        <div class="grow" />
+        <Conditional visible={loggedIn}>
+          <a class="text-red-300 mb-2" href="/api/logout">
+            Logout
+          </a>
+        </Conditional>
       </div>
     </div>
   );

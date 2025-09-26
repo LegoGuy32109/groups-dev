@@ -3,6 +3,7 @@ import { define, updateErrors } from "../../utils.ts";
 import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Profile } from "../../types/entities/Profile.ts";
+import { Users } from "../../data/Users.ts";
 
 export const handler = define.handlers({
   async GET({ req, state }) {
@@ -31,7 +32,7 @@ export const handler = define.handlers({
       return page();
     }
 
-    const result = await Db.getUserProfile(value.userId);
+    const result = await Users.getUserProfile(value.userId);
     if (!result.success) {
       updateErrors(state, result.errors);
       return page();

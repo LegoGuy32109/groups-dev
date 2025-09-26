@@ -53,6 +53,7 @@
     "npm:preact@^10.27.2": "10.27.2",
     "npm:rollup@^4.50.0": "4.52.2",
     "npm:tailwindcss@^4.1.13": "4.1.13",
+    "npm:vite@7.1.7": "7.1.7_picomatch@4.0.3_@types+node@24.2.0",
     "npm:vite@^7.1.4": "7.1.7_picomatch@4.0.3_@types+node@24.2.0",
     "npm:vite@^7.1.7": "7.1.7_picomatch@4.0.3_@types+node@24.2.0"
   },

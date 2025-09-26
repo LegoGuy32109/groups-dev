@@ -1,10 +1,11 @@
 import { UserAgent } from "@std/http/user-agent";
+import { Sessions } from "../../data/Sessions.ts";
+import { GroupmeIntegration } from "../../types/Groupme.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { groupmeLogin } from "../../utilities/security.ts";
-import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
-import { GroupmeIntegration } from "../../types/Groupme.ts";
-import { Sessions } from "../../data/Sessions.ts";
+import { define, updateErrors, makeRedirectResponse } from "../../utils.ts";
 import { Users } from "../../data/Users.ts";
+
 
 export const handler = define.middleware(async (ctx) => {
   const { req, state, url } = ctx;
@@ -26,7 +27,7 @@ export const handler = define.middleware(async (ctx) => {
     const sessionResult = await Sessions.getSession(sessionId);
     if (sessionResult.success) {
       const profileResult = await Users.getUserProfile(
-        sessionResult.session.userId,
+        sessionResult.session.userId
       );
       if (profileResult.success) {
         state.session = sessionResult.session;
@@ -48,14 +49,14 @@ export const handler = define.middleware(async (ctx) => {
     } catch {
       updateErrors(
         state,
-        `Failed to parse groupme integration, got: '${groupmeIntegrationString}'`,
+        `Failed to parse groupme integration, got: '${groupmeIntegrationString}'`
       );
       break integrationCheck;
     }
     if (!groupmeIntegration?.accessToken) {
       updateErrors(
         state,
-        `Failed to get accessToken out of groupme integration, got: '${groupmeIntegration}' `,
+        `Failed to get accessToken out of groupme integration, got: '${groupmeIntegration}' `
       );
       break integrationCheck;
     }
@@ -89,3 +90,4 @@ export const handler = define.middleware(async (ctx) => {
   Cookies.clear(response.headers, Cookies.Error);
   return response;
 });
+
