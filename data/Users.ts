@@ -12,6 +12,25 @@ export class Users {
     return await Array.fromAsync(kv.list({ prefix: ["users"] }));
   }
 
+  static async getAllProfileRecords(): AsyncResult<
+    { profileRecords: Array<Deno.KvEntry<Profile>> }
+  > {
+    const kv = await Db.kv();
+
+    const allUserRecords = await Array.fromAsync(
+      kv.list({ prefix: ["users"] }),
+    );
+    const profileRecords = allUserRecords.filter((record) =>
+      record.key.at(-1) === "profile"
+    ) as Array<Deno.KvEntry<Profile>>;
+
+    if (profileRecords.length === 0) {
+      return Errors.make("No Profiles found.");
+    }
+
+    return { success: true, profileRecords };
+  }
+
   static async getUserProfile(
     userId: string,
   ): AsyncResult<{ profile: Profile }> {
@@ -113,5 +132,4 @@ export class Users {
       ],
     };
   }
-
 }
