@@ -37,7 +37,13 @@ export default define.page<typeof handler>(
                 <li key={record.key}>
                   <details>
                     <summary class="font-semibold">
-                      {record.value.firstName} {record.value.lastName}{" "}
+                      <span
+                        class={`${
+                          record.value.groupme ? "text-blue-500" : ""
+                        }`}
+                      >
+                        {record.value.firstName} {record.value.lastName}
+                      </span>{" "}
                       <i class="font-medium text-[8px]">
                         {record.key.at(1)?.toString() ?? "<no id>"}
                       </i>
