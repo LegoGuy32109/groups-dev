@@ -23,13 +23,27 @@ export default define.page<typeof handler>(
         <Head>
           <title>E91Students - Profiles</title>
         </Head>
-        <div>
-          <h1>E91Students Profiles</h1>
-          <ul class="text-slate-300 flex flex-col gap-2">
+        <div class="flex flex-col w-full justify-start p-4 text-slate-300">
+          <h1 class="text-3xl">E91Students Profiles</h1>
+          <button
+            type="button"
+            class="my-4 bg-blue-800 rounded-3xl font-semibold text-2xl ring-slate-400 ring-1"
+          >
+            New +
+          </button>
+          <ul class="flex flex-col gap-2">
             {result.success &&
               result.profileRecords.map((record) => (
                 <li key={record.key}>
-                  {JSON.stringify(record, undefined, "  ")}
+                  <details>
+                    <summary class="font-semibold">
+                      {record.value.firstName} {record.value.lastName}{" "}
+                      <i class="font-medium text-[8px]">
+                        {record.key.at(1)?.toString() ?? "<no id>"}
+                      </i>
+                    </summary>
+                    <p>{JSON.stringify(record, undefined, "  ")}</p>
+                  </details>
                 </li>
               ))}
           </ul>
