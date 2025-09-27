@@ -10,6 +10,10 @@ export class Dates {
       .substring(5)
       .replaceAll("-", "/");
   }
+  static formatIso(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toLocaleString(undefined, { timeZone: "Etc/GMT+4" });
+  }
   static fromGroupmeTemporal(temporal: GroupmeTemporal): Date {
     return new Date(temporal * 1000);
   }

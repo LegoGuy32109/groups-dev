@@ -63,6 +63,66 @@ export async function getPbkdf2Hash(
   return new Uint8Array(derivedBits);
 }
 
+// export async function login(
+//   username: string,
+//   password: string,
+//   userAgent?: UserAgent,
+// ): AsyncResult<{ sessionId: string }> {
+//   // find user id from username
+//   const userIdResult = await Db.getUserIdFromUsername(username);
+//   if (!userIdResult.success) {
+//     return userIdResult;
+//   }
+//   const { userId } = userIdResult;
+//   // find auth from user id
+//   const userResult = await Db.getUserProfile(userId);
+//   if (!userResult.success) {
+//     return userResult;
+//   }
+//   const { authentication } = userResult;
+//   // hash password with salt from auth record
+//   const { saltB64, hashB64 } = authentication;
+//   const correctPasswordHash = fromBase64(hashB64);
+//   const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
+//   // compare given password hash with hash in auth record
+//   const isCorrectPassword = timingSafeEqual(
+//     correctPasswordHash,
+//     givenPasswordHash,
+//   );
+//   if (!isCorrectPassword) {
+//     return {
+//       success: false,
+//       errors: [`incorrect password for user '${username}'`],
+//     };
+//   }
+//   // if hashes match create a new session, it's id will be the auth cookie
+//   const newSessionId = crypto.randomUUID();
+//   const nowIso = Dates.getNowIso();
+//   const newSessionRecord: Session = {
+//     userId,
+//     createdOn: nowIso,
+//     updatedOn: nowIso,
+//     createdBy: "system",
+//     updatedBy: "system",
+//     userAgent,
+//   };
+//   const addSessionResult = await Db.addNewSession(
+//     newSessionId,
+//     newSessionRecord,
+//   );
+//   if (!addSessionResult.success) {
+//     return addSessionResult;
+//   }
+//   // return cookie for response in other function
+//   return { success: true, sessionId: newSessionId };
+// }
+//
+// export async function logout(
+//   sessionId: string,
+// ): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
+//   return await Db.removeSession(sessionId);
+// }
+
 export async function signup(
   firstName: string,
   lastName: string,
@@ -107,12 +167,13 @@ export async function signup(
   const prefillKey = ["tokens", prefillToken];
   // In 4 days this token record will expire
   const expireIn = 4 * 24 * 60 * 60 * 1000;
+  const expiresOn = new Date(Date.now() + expireIn).toISOString();
 
   const createUserResponse = await kv.atomic()
     .set(userProfileKey, userProfileRecord)
     // create temporary token for login prefill link
     .check({ key: prefillKey, versionstamp: null })
-    .set(prefillKey, { userId: newUserId }, { expireIn })
+    .set(prefillKey, { userId: newUserId, expiresOn }, { expireIn })
     .commit();
 
   if (!createUserResponse.ok) {
@@ -195,63 +256,3 @@ export async function groupmeLogin(
   // return cookie for response in other function
   return { success: true, sessionId: newSessionId };
 }
-
-// export async function login(
-//   username: string,
-//   password: string,
-//   userAgent?: UserAgent,
-// ): AsyncResult<{ sessionId: string }> {
-//   // find user id from username
-//   const userIdResult = await Db.getUserIdFromUsername(username);
-//   if (!userIdResult.success) {
-//     return userIdResult;
-//   }
-//   const { userId } = userIdResult;
-//   // find auth from user id
-//   const userResult = await Db.getUserProfile(userId);
-//   if (!userResult.success) {
-//     return userResult;
-//   }
-//   const { authentication } = userResult;
-//   // hash password with salt from auth record
-//   const { saltB64, hashB64 } = authentication;
-//   const correctPasswordHash = fromBase64(hashB64);
-//   const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
-//   // compare given password hash with hash in auth record
-//   const isCorrectPassword = timingSafeEqual(
-//     correctPasswordHash,
-//     givenPasswordHash,
-//   );
-//   if (!isCorrectPassword) {
-//     return {
-//       success: false,
-//       errors: [`incorrect password for user '${username}'`],
-//     };
-//   }
-//   // if hashes match create a new session, it's id will be the auth cookie
-//   const newSessionId = crypto.randomUUID();
-//   const nowIso = Dates.getNowIso();
-//   const newSessionRecord: Session = {
-//     userId,
-//     createdOn: nowIso,
-//     updatedOn: nowIso,
-//     createdBy: "system",
-//     updatedBy: "system",
-//     userAgent,
-//   };
-//   const addSessionResult = await Db.addNewSession(
-//     newSessionId,
-//     newSessionRecord,
-//   );
-//   if (!addSessionResult.success) {
-//     return addSessionResult;
-//   }
-//   // return cookie for response in other function
-//   return { success: true, sessionId: newSessionId };
-// }
-//
-// export async function logout(
-//   sessionId: string,
-// ): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
-//   return await Db.removeSession(sessionId);
-// }

@@ -19,6 +19,7 @@
     "**/_fresh/*"
   ],
   "imports": {
+    "@preact-icons/md": "jsr:@preact-icons/md@^1.0.13",
     "@preact-icons/tb": "jsr:@preact-icons/tb@^1.0.14",
     "@std/assert": "jsr:@std/assert@^1.0.14",
     "@std/http": "jsr:@std/http@^1.0.20",

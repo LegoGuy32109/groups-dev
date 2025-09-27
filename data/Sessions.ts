@@ -134,5 +134,4 @@ export class Sessions {
       userSessionIds: updatedSessionIds,
     };
   }
-
 }

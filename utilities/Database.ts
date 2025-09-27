@@ -62,7 +62,6 @@ export class Db {
     return { success: true, userId };
   }
 
-
   static async deleteAllDataInTable(table: string) {
     const kv = await Db.kv();
     const iter = kv.list({ prefix: [table] });

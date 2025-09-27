@@ -4,6 +4,7 @@ import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Profile } from "../../types/entities/Profile.ts";
 import { Users } from "../../data/Users.ts";
+import Conditional from "../../components/Conditional.tsx";
 
 export const handler = define.handlers({
   async GET({ req, state }) {
@@ -74,9 +75,12 @@ export default define.page<typeof handler>(
           Login to e91Students
         </h1>
         <div class="bg-slate-600 rounded-md p-5 font-semibold shadow-lg shadow-slate-900/90">
-          {GROUPME_AUTH_REDIRECT_URL
-            ? <GroupmeLogin profile={data?.profile} />
-            : <Form />}
+          <Conditional visible={!!GROUPME_AUTH_REDIRECT_URL}>
+            <GroupmeLogin profile={data?.profile} />
+            <p class="text-red-700 mt-2 font-mono">
+              No GROUPME_AUTH_REDIRECT_URL is set for this deployment.
+            </p>
+          </Conditional>
         </div>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
@@ -105,60 +109,5 @@ function GroupmeLogin({ profile }: { profile?: Profile }) {
         </div>
       </div>
     </a>
-  );
-}
-
-function Form(
-  { visible = true, username, password }: {
-    visible?: boolean;
-    username?: string;
-    password?: string;
-  },
-) {
-  if (!visible) {
-    return;
-  }
-
-  return (
-    <form
-      method="post"
-      action="/api/login"
-      class="flex flex-col gap-2"
-    >
-      <label class="text-slate-300 flex justify-between gap-4">
-        Username:{" "}
-        <input
-          type="text"
-          name="username"
-          autocomplete="username"
-          value={username}
-          required
-          class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
-        />
-      </label>
-      <label class="text-slate-300 flex justify-between gap-4">
-        Password:{" "}
-        <input
-          type="password"
-          name="password"
-          value={password}
-          autocomplete="current-password"
-          required
-          class="px-1 rounded-lg bg-slate-200 text-slate-800 font-normal"
-        />
-      </label>
-      <div class="flex justify-between items-center">
-        <a href="/" class="underline text-slate-800">
-          Forgot Password?
-        </a>
-        <button
-          type="submit"
-          class="rounded-full text-slate-200 m-1 p-2 min-w-20
-          bg-gradient-to-r from-sky-600 to-sky-300 bg-[length:150%_150%] transition-[background-position] duration-300 hover:bg-[position:90%_90%]"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
   );
 }

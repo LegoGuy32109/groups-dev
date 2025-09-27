@@ -8,7 +8,9 @@
     "jsr:@fresh/core@2": "2.1.1",
     "jsr:@fresh/core@^2.1.1": "2.1.1",
     "jsr:@fresh/plugin-vite@^1.0.4": "1.0.4",
+    "jsr:@preact-icons/common@^1.0.12": "1.1.0",
     "jsr:@preact-icons/common@^1.1.0": "1.1.0",
+    "jsr:@preact-icons/md@^1.0.13": "1.0.13",
     "jsr:@preact-icons/tb@^1.0.14": "1.0.14",
     "jsr:@std/assert@^1.0.14": "1.0.14",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
@@ -48,6 +50,7 @@
     "npm:esbuild@0.25.7": "0.25.7",
     "npm:esbuild@~0.25.5": "0.25.7",
     "npm:preact-render-to-string@^6.5.11": "6.6.1_preact@10.27.2",
+    "npm:preact@10.22.1": "10.22.1",
     "npm:preact@^10.22.1": "10.27.2",
     "npm:preact@^10.27.0": "10.27.2",
     "npm:preact@^10.27.2": "10.27.2",
@@ -121,10 +124,17 @@
         "npm:preact@^10.22.1"
       ]
     },
+    "@preact-icons/md@1.0.13": {
+      "integrity": "3f620b70b9cc5d88fbb46951131550e191bc852e1dd4978ab097e0361259078a",
+      "dependencies": [
+        "jsr:@preact-icons/common@^1.0.12",
+        "npm:preact@10.22.1"
+      ]
+    },
     "@preact-icons/tb@1.0.14": {
       "integrity": "46e4f3edfdbefc4080714ffb18327a72257696d670d479b1108890345674a6e2",
       "dependencies": [
-        "jsr:@preact-icons/common",
+        "jsr:@preact-icons/common@^1.1.0",
         "npm:preact@^10.22.1"
       ]
     },
@@ -697,7 +707,7 @@
       "integrity": "sha512-nyuRIGmcwM/HjvFHhN2xUWfyla9D4llHt+prWoxjQfD6b5prO7CFPlG/xjJkP31Oic4KQXfH9SIhJFP9cy4lmg==",
       "dependencies": [
         "@preact/signals-core",
-        "preact"
+        "preact@10.27.2"
       ]
     },
     "@prefresh/babel-plugin@0.5.2": {
@@ -706,7 +716,7 @@
     "@prefresh/core@1.5.7_preact@10.27.2": {
       "integrity": "sha512-AsyeitiPwG7UkT0mqgKzIDuydmYSKtBlzXEb5ymzskvxewcmVGRjQkcHDy6PCNBT7soAyHpQ0mPgXX4IeyOlUg==",
       "dependencies": [
-        "preact"
+        "preact@10.27.2"
       ]
     },
     "@prefresh/utils@1.2.1": {
@@ -720,7 +730,7 @@
         "@prefresh/core",
         "@prefresh/utils",
         "@rollup/pluginutils",
-        "preact",
+        "preact@10.27.2",
         "vite@7.1.7_picomatch@4.0.3"
       ]
     },
@@ -732,7 +742,7 @@
         "@prefresh/core",
         "@prefresh/utils",
         "@rollup/pluginutils",
-        "preact",
+        "preact@10.27.2",
         "vite@7.1.7_picomatch@4.0.3_@types+node@24.2.0"
       ]
     },
@@ -1246,8 +1256,11 @@
     "preact-render-to-string@6.6.1_preact@10.27.2": {
       "integrity": "sha512-IIMfXRjmbSP9QmG18WJLQa4Z4yx3J0VC9QN5q9z2XYlWSzFlJ+bSm/AyLyyV/YFwjof1OXFX2Mz6Ao60LXudJg==",
       "dependencies": [
-        "preact"
+        "preact@10.27.2"
       ]
+    },
+    "preact@10.22.1": {
+      "integrity": "sha512-jRYbDDgMpIb5LHq3hkI0bbl+l/TQ9UnkdQ0ww+lp+4MMOdqaUYdFc5qeyP+IV8FAd/2Em7drVPeKdQxsiWCf/A=="
     },
     "preact@10.27.2": {
       "integrity": "sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg=="
@@ -1371,6 +1384,7 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
+      "jsr:@preact-icons/md@^1.0.13",
       "jsr:@preact-icons/tb@^1.0.14",
       "jsr:@std/assert@^1.0.14",
       "jsr:@std/http@^1.0.20",
