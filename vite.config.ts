@@ -5,7 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   server: {
     cors: {
-      origin: /https?:\/\/([A-Za-z0-9\-\.]+)?(\.ddev\.site)(?::\d+)?$/,
+      origin: [
+        /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+        /\.ddev\.site(?::\d+)?$/,
+      ],
     },
   },
   plugins: [fresh(), tailwindcss()],

@@ -30,3 +30,17 @@ export function makeRedirectResponse(
   headers.set("location", location);
   return new Response(null, { status: 303, headers });
 }
+
+export function makeJsonResponse(
+  object: unknown,
+  status: number,
+  headers?: Headers,
+): Response {
+  return new Response(JSON.stringify(object), {
+    status,
+    headers: {
+      ...new Headers(headers),
+      "Content-Type": "application/json",
+    },
+  });
+}

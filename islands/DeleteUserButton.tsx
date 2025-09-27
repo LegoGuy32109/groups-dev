@@ -1,4 +1,3 @@
-import { Users } from "../data/Users.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import DeleteButton from "./DeleteButton.tsx";
 
@@ -18,9 +17,12 @@ export default function DeleteUserButton(
 
     if (!ok) return;
 
-    const result = await Users.deleteUser(userId);
-    if (!result.success) {
-      console.error(result.errors);
+    const deleteResponse = await fetch(`/api/users?=${userId}`, {
+      method: "DELETE",
+    });
+    const response = await deleteResponse.json();
+    if (response.errors) {
+      console.error(response.errors);
     }
   }
 
