@@ -133,4 +133,17 @@ export class Db {
     }
     return { success: true };
   }
+
+  static async getTokenValue(
+    possibleToken: string,
+  ): AsyncResult<{ userId: string }> {
+    const kv = await Db.kv();
+    const tokenResult = await kv.get<
+      { userId: string }
+    >(["tokens", possibleToken]);
+    if (!tokenResult.value) {
+      return Errors.make(`Token '${possibleToken}' is Invalid or Expired.`);
+    }
+    return { success: true, userId: tokenResult.value.userId };
+  }
 }

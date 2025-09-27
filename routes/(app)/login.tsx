@@ -12,45 +12,32 @@ export const handler = define.handlers({
     const url = new URL(req.url);
     const possibleToken = url.searchParams.get("token");
     if (!possibleToken) return page(); // skip if it doesn't
-    console.log(possibleToken);
-    console.log(
-      Deno.env.get("DENO_KV_ACCESS_TOKEN"),
-      "deno access",
-      possibleToken,
-    );
 
     // token exists, attempt to grab from db
-    const kv = await Db.kv();
-    const tokenResult = await kv.get<
-      { userId: string }
-    >(["tokens", possibleToken]);
-    console.log(tokenResult);
-    const { value } = tokenResult;
-
+    const tokenResult = await Db.getTokenValue(possibleToken);
     // couldn't grab token from db
-    if (!value) {
-      updateErrors(state, `Invalid or Expired token '${possibleToken}'`);
+    if (!tokenResult.success) {
+      updateErrors(state, tokenResult.errors);
       return page();
     }
+    const { userId } = tokenResult;
 
-    const result = await Users.getUserProfile(value.userId);
+    const result = await Users.getUserProfile(userId);
     if (!result.success) {
       updateErrors(state, result.errors);
       return page();
     }
 
-    const response = page({ profile: result.profile });
     // got token from db, store temporarily in cookies
-    const headers = new Headers(response.headers);
-    Cookies.set({
-      headers,
+    const response = page({ profile: result.profile });
+    response.headers = Cookies.set({
+      headers: new Headers(response.headers),
       cookie: {
         name: Cookies.Token,
-        value: value.userId,
+        value: userId,
         maxAge: 24 * 60 * 60,
       },
     });
-    response.headers = headers;
     return response;
   },
 });
