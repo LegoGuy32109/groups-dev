@@ -69,11 +69,6 @@ export const handler = define.middleware(async (ctx) => {
     }
     const { sessionId } = groupmeResult;
     if (sessionId) {
-      // ask for persistant storage
-      if (navigator.storage && navigator.storage.persist) {
-        const isPersisted = await navigator.storage.persist();
-        console.log(`Persisted storage granted: ${isPersisted}`);
-      }
       const headers = new Headers();
       // set cookie and refresh to home for normal authentication
       Cookies.set({

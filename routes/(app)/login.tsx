@@ -2,7 +2,6 @@ import { page } from "fresh";
 import { define, updateErrors } from "../../utils.ts";
 import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
-import { Profile } from "../../types/entities/Profile.ts";
 import { Users } from "../../data/Users.ts";
 import Conditional from "../../components/Conditional.tsx";
 
@@ -45,7 +44,7 @@ export const handler = define.handlers({
 const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
-  ({ state, data }) => {
+  ({ req, state, data }) => {
     // if already logged in, prevent UI to login again
     if (state.profile) {
       return (
@@ -56,6 +55,10 @@ export default define.page<typeof handler>(
       );
     }
 
+    // this is profile parsed from token
+    const { firstName, lastName } = data?.profile ?? {};
+
+    console.log(req.headers);
     return (
       <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center justify-center overflow-auto">
         <h1 class="font-semibold text-3xl text-slate-500 leading-relaxed tracking-wider">
@@ -63,12 +66,31 @@ export default define.page<typeof handler>(
         </h1>
         <div class="bg-slate-600 rounded-md p-5 font-semibold shadow-lg shadow-slate-900/90">
           <Conditional visible={!!GROUPME_AUTH_REDIRECT_URL}>
-            <GroupmeLogin profile={data?.profile} />
+            <a href={GROUPME_AUTH_REDIRECT_URL}>
+              <div class="flex items-center gap-4 bg-[#1850b6] rounded-3xl p-2">
+                <img
+                  alt="groupme logo"
+                  width="100"
+                  height="100"
+                  class="p-1"
+                  src="https://web.groupme.com/images/svg-icons/groupme-logo-base.svg"
+                />
+                <div class="flex flex-col text-white font-medium mr-4">
+                  <p>Login with GroupMe</p>
+                  {firstName && (
+                    <p>Connect account for {firstName} {lastName}</p>
+                  )}
+                </div>
+              </div>
+            </a>
             <p class="text-red-700 mt-2 font-mono">
               No GROUPME_AUTH_REDIRECT_URL is set for this deployment.
             </p>
           </Conditional>
         </div>
+        <code class="mt-2 text-xs text-slate-300 bg-slate-900/70 rounded-md">
+          {JSON.stringify(req.headers, undefined, 2)}
+        </code>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
         </p>
@@ -76,25 +98,3 @@ export default define.page<typeof handler>(
     );
   },
 );
-
-function GroupmeLogin({ profile }: { profile?: Profile }) {
-  const { firstName, lastName } = profile ?? {};
-
-  return (
-    <a href={GROUPME_AUTH_REDIRECT_URL}>
-      <div class="flex items-center gap-4 bg-[#1850b6] rounded-3xl p-2">
-        <img
-          alt="groupme logo"
-          width="100"
-          height="100"
-          class="p-1"
-          src="https://web.groupme.com/images/svg-icons/groupme-logo-base.svg"
-        />
-        <div class="flex flex-col text-white font-medium mr-4">
-          <p>Login with GroupMe</p>
-          {profile && <p>Connect account for {firstName} {lastName}</p>}
-        </div>
-      </div>
-    </a>
-  );
-}
