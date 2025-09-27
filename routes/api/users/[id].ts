@@ -1,14 +1,12 @@
-import { Users } from "../../data/Users.ts";
-import { Cookies } from "../../utilities/Cookies.ts";
-import { define, makeJsonResponse } from "../../utils.ts";
+import { Users } from "../../../data/Users.ts";
+import { Cookies } from "../../../utilities/Cookies.ts";
+import { define, makeJsonResponse } from "../../../utils.ts";
 
 export const handler = define.handlers({
-  async GET({ req }) {
+  GET({ req }) {
     const sessionId = Cookies.get(req.headers, Cookies.Auth);
     if (!sessionId) return new Response("Unauthenticaed", { status: 401 });
 
-    const requestBody = await req.json();
-    console.log(requestBody);
     return new Response();
   },
   POST() {
@@ -19,7 +17,6 @@ export const handler = define.handlers({
   },
   async DELETE({ req, params }) {
     try {
-       console.log(req, params)
       const sessionId = Cookies.get(req.headers, Cookies.Auth);
       if (!sessionId) return new Response("Unauthenticaed", { status: 401 });
 

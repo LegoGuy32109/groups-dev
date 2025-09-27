@@ -17,12 +17,14 @@ export default function DeleteUserButton(
 
     if (!ok) return;
 
-    const deleteResponse = await fetch(`/api/users?=${userId}`, {
+    const deleteResponse = await fetch(`/api/users/${userId}`, {
       method: "DELETE",
     });
     const response = await deleteResponse.json();
     if (response.errors) {
       console.error(response.errors);
+    } else {
+       globalThis.location.reload()
     }
   }
 

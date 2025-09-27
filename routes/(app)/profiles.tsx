@@ -65,9 +65,12 @@ export default define.page<typeof handler>(
                         />
                       </div>
                       <ul class="mb-1 rounded-xl bg-slate-900/50 pt-2 p-1">
-                        <li title="Default">
+                        <li>
                           Default Group:{" "}
                           {value.defaultGroup ?? "<no default group>"}
+                        </li>
+                        <li>
+                          GroupMe Integrated: {value.groupme ? "✅" : "❌"}
                         </li>
                         <li>
                           Updated On: {Dates.formatIso(value.updatedOn)}
