@@ -36,9 +36,7 @@ export default function CornerMenu({ state }: { state: State }) {
       <div class="w-[160px] h-screen bg-slate-900/90 text-slate-300
     text-3xl font-light p-3 flex flex-col gap-y-4">
         <a href="/">Home</a>
-        <Conditional visible={true}>
-          <a href="/login">Login</a>
-        </Conditional>
+        <a href="/login">Login</a>
         <Conditional visible={loggedIn}>
           <a href="/profiles">
             Profiles
