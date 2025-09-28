@@ -123,6 +123,38 @@ export async function getPbkdf2Hash(
 //   return await Db.removeSession(sessionId);
 // }
 
+export async function createLoginToken(
+  userId: string,
+): AsyncResult<{ token: string }> {
+  const kv = await Db.kv();
+
+  const userResult = await Users.getUserProfile(userId);
+  if (!userResult.success) {
+    return userResult;
+  }
+
+  const prefillToken = crypto.randomUUID();
+  const prefillKey = ["tokens", prefillToken];
+  // In 4 days this token record will expire
+  const expireIn = 4 * 24 * 60 * 60 * 1000;
+  const expiresOn = new Date(Date.now() + expireIn).toISOString();
+
+  const createTokenResponse = await kv.atomic()
+    // create temporary token for login prefill link
+    .check({ key: prefillKey, versionstamp: null })
+    .set(prefillKey, { userId: userId, expiresOn }, { expireIn })
+    .commit();
+
+  if (!createTokenResponse.ok) {
+    return {
+      success: false,
+      errors: ["Failed to create Token. Try again."],
+    };
+  }
+
+  return { success: true, token: prefillToken };
+}
+
 export async function signup(
   firstName: string,
   lastName: string,
@@ -170,10 +202,10 @@ export async function signup(
   const expiresOn = new Date(Date.now() + expireIn).toISOString();
 
   const createUserResponse = await kv.atomic()
-    .set(userProfileKey, userProfileRecord)
     // create temporary token for login prefill link
     .check({ key: prefillKey, versionstamp: null })
     .set(prefillKey, { userId: newUserId, expiresOn }, { expireIn })
+    .set(userProfileKey, userProfileRecord)
     .commit();
 
   if (!createUserResponse.ok) {

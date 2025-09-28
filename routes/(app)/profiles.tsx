@@ -32,12 +32,16 @@ export default define.page<typeof handler>(
         </Head>
         <div class="flex flex-col w-full justify-start p-4 text-slate-300">
           <h1 class="text-3xl">Group Leader Profiles</h1>
+          {
+            /* TODO:
           <button
             type="button"
             class="my-4 bg-blue-800 rounded-3xl font-semibold text-2xl ring-slate-400 ring-1 max-w-[400px]"
           >
             New +
           </button>
+            */
+          }
           <ul class="flex flex-col gap-2 wrap-break-word">
             {result.success &&
               result.profileRecords.map(({ key, value }) => (

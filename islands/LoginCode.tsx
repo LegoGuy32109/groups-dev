@@ -4,7 +4,6 @@ import { MdQrCode } from "@preact-icons/md";
 import { qrcode } from "@libs/qrcode";
 import { useEffect, useMemo } from "preact/hooks";
 import { Profile } from "../types/entities/Profile.ts";
-import { TbCodeDots } from "@preact-icons/tb";
 
 export default function LoginCode(
   { userId, profile }: { userId?: string; profile: Profile },
@@ -12,22 +11,37 @@ export default function LoginCode(
   const codeShown = useSignal(false);
   const qrcodeSvg = useSignal("");
   const loginLink = useSignal("");
-
-  function handleShowLoginCode() {
-    codeShown.value = true;
-
-    // get link to user
-    loginLink.value =
-      `${globalThis.location.origin}/login?token=${crypto.randomUUID()}`;
-    const svg = qrcode(loginLink.value, { output: "svg" });
-    qrcodeSvg.value = svg;
-  }
+  const errors = useSignal<Array<string>>([]);
 
   const url = useMemo(() => {
     const blob = new Blob([qrcodeSvg.value], { type: "image/svg+xml" });
     return URL.createObjectURL(blob);
   }, [qrcodeSvg.value]);
   useEffect(() => () => URL.revokeObjectURL(url), [url]);
+
+  // don't render without a user id, keep state stuff above this early return
+  if (!userId) return;
+
+  async function handleShowLoginCode() {
+    if (!userId) return;
+    codeShown.value = true;
+
+    const codeResult = await (await fetch(`api/auth/loginToken/${userId}`))
+      .json();
+    if (codeResult.errors) {
+      errors.value = codeResult.errors;
+      return;
+    }
+    if (!codeResult.token) {
+      errors.value = ["Failed to get token from server"];
+      return;
+    }
+
+    loginLink.value =
+      `${globalThis.location.origin}/login?token=${codeResult.token}`;
+    const svg = qrcode(loginLink.value, { output: "svg" });
+    qrcodeSvg.value = svg;
+  }
 
   return (
     <>
@@ -42,13 +56,17 @@ export default function LoginCode(
           </span>
         </button>
       </Conditional>
-      <Conditional visible={codeShown.value}>
+      <Conditional visible={errors.value.length > 0}>
+        <p class="bg-red-700">{errors.value}</p>
+      </Conditional>
+      <Conditional visible={errors.value.length === 0 && codeShown.value}>
         <div class="m-4 flex flex-col ring-slate-400 ring-4 rounded-xl">
           <div class="flex flex-col items-center p-2 text-sm">
             <p>
-              Hi {profile.firstName}! This is Josh the tech admin for E91Students sunday
-              nights. I'm sending you this link so you can access our Attendance
-              tracker 2.0 : )
+              Hi{" "}
+              {profile.firstName}! This is Josh Hale the tech admin for
+              E91Students sunday nights. I'm sending you this link so you can
+              access our Attendance tracker 2.0 : )
             </p>
             <p class="text-red-100">
               Every link is personalized, so please don't share them.

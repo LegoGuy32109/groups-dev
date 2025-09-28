@@ -54,9 +54,6 @@ export default define.page<typeof handler>(
         <h1 class="m-5 font-medium text-3xl text-slate-500 max-w-[350px]">
           You're already logged in,{" "}
           <a href="/api/logout" class="font-bold text-red-300">Logout?</a>
-          <code class="mt-2 max-w-11/12 text-xs text-slate-300 bg-slate-900/70 rounded-md wrap-break-word">
-            {JSON.stringify(cookie, undefined, 2)}
-          </code>
         </h1>
       );
     }
@@ -83,7 +80,10 @@ export default define.page<typeof handler>(
                 <div class="flex flex-col text-white font-medium mr-4">
                   <p>Login with GroupMe</p>
                   {firstName && (
-                    <p>Connect account for {firstName} {lastName}</p>
+                    <>
+                      <p>Connect account for</p>
+                      <p>{firstName} {lastName}</p>
+                    </>
                   )}
                 </div>
               </div>
@@ -93,9 +93,6 @@ export default define.page<typeof handler>(
             </p>
           </Conditional>
         </div>
-        <code class="mt-2 max-w-11/12 text-xs text-slate-300 bg-slate-900/70 rounded-md wrap-break-word">
-          {JSON.stringify(cookie, undefined, 2)}
-        </code>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
         </p>
