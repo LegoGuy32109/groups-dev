@@ -80,7 +80,10 @@ export default define.page<typeof handler>(
                           Created On: {Dates.formatIso(value.createdOn)}
                         </li>
                         <li>
-                          <LoginCode userId={key.at(1)?.toString()} />
+                          <LoginCode
+                            profile={value}
+                            userId={key.at(1)?.toString()}
+                          />
                         </li>
                         <li class="flex text-xs text-slate-500 mt-1">
                           <CopyButton

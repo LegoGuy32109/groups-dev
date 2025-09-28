@@ -11,6 +11,8 @@ export default function Conditional(
   },
 ): ComponentChild {
   const listOfChildren = Array.isArray(children) ? children : [children];
-  if (!visible) return listOfChildren[1] ?? null;
+  if (!visible) {
+    return listOfChildren[1] ?? null;
+  }
   return listOfChildren[0];
 }
