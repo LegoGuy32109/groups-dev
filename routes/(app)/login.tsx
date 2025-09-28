@@ -45,12 +45,18 @@ const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
   ({ req, state, data }) => {
+    const cookie = req.headers.get("cookie");
+    console.log(cookie);
+
     // if already logged in, prevent UI to login again
     if (state.profile) {
       return (
         <h1 class="m-5 font-medium text-3xl text-slate-500 max-w-[350px]">
           You're already logged in,{" "}
           <a href="/api/logout" class="font-bold text-red-300">Logout?</a>
+          <code class="mt-2 max-w-11/12 text-xs text-slate-300 bg-slate-900/70 rounded-md wrap-break-word">
+            {JSON.stringify(cookie, undefined, 2)}
+          </code>
         </h1>
       );
     }
@@ -58,7 +64,6 @@ export default define.page<typeof handler>(
     // this is profile parsed from token
     const { firstName, lastName } = data?.profile ?? {};
 
-    console.log(req.headers);
     return (
       <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center justify-center overflow-auto">
         <h1 class="font-semibold text-3xl text-slate-500 leading-relaxed tracking-wider">
@@ -88,8 +93,8 @@ export default define.page<typeof handler>(
             </p>
           </Conditional>
         </div>
-        <code class="mt-2 text-xs text-slate-300 bg-slate-900/70 rounded-md">
-          {JSON.stringify(req.headers, undefined, 2)}
+        <code class="mt-2 max-w-11/12 text-xs text-slate-300 bg-slate-900/70 rounded-md wrap-break-word">
+          {JSON.stringify(cookie, undefined, 2)}
         </code>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}

@@ -21,7 +21,8 @@ export const handler = define.middleware(async (ctx) => {
   state.errors = Cookies.getErrors(req.headers);
 
   // if an auth cookie exists with session id, attempt to access it
-  const sessionId = Cookies.get(req, Cookies.Auth);
+  const sessionId = Cookies.get(req, Cookies.Auth) ||
+    localStorage.getItem(Cookies.Auth);
   if (sessionId) {
     const sessionResult = await Sessions.getSession(sessionId);
     if (sessionResult.success) {
@@ -75,6 +76,7 @@ export const handler = define.middleware(async (ctx) => {
         headers,
         cookie: { name: Cookies.Auth, value: sessionId },
       });
+      localStorage.setItem(Cookies.Auth, sessionId);
       // don't need token or groupme stuff anymore
       Cookies.clear(headers, [Cookies.Token, Cookies.Groupme]);
       return makeRedirectResponse(headers, "/");
