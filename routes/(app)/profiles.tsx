@@ -31,7 +31,7 @@ export default define.page<typeof handler>(
           <title>E91Students - Profiles</title>
         </Head>
         <div class="flex flex-col w-full justify-start p-4 text-slate-300">
-          <h1 class="text-3xl">Group Leader Profiles</h1>
+          <h1 class="text-3xl mb-2">Group Leader Profiles</h1>
           {
             /* TODO:
           <button

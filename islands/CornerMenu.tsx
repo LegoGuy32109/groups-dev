@@ -9,7 +9,7 @@ export default function CornerMenu({ state }: { state: State }) {
   const overlayOpen = useSignal(false);
   if (!overlayOpen.value) {
     return (
-      <div class="fixed right-2 top-2 z-50 flex flex-col gap-2">
+      <div class="fixed right-2 top-2 max-md:top-10 z-50 flex flex-col gap-2">
         <HyrdrationBoundary overlayClass="rounded-lg">
           <button
             type="button"
