@@ -8,6 +8,7 @@
     "jsr:@fresh/core@2": "2.1.1",
     "jsr:@fresh/core@^2.1.1": "2.1.1",
     "jsr:@fresh/plugin-vite@^1.0.4": "1.0.4",
+    "jsr:@libs/qrcode@3": "3.0.0",
     "jsr:@preact-icons/common@^1.0.12": "1.1.0",
     "jsr:@preact-icons/common@^1.1.0": "1.1.0",
     "jsr:@preact-icons/md@^1.0.13": "1.0.13",
@@ -117,6 +118,9 @@
         "npm:rollup",
         "npm:vite@^7.1.4"
       ]
+    },
+    "@libs/qrcode@3.0.0": {
+      "integrity": "f19ae517f67c33cd1c0ed3a54a46540980de45cb3327d09b21479a75d7222953"
     },
     "@preact-icons/common@1.1.0": {
       "integrity": "ed191a9f88ee0e35539b8de3482d1f8a223b3f14f3b0dbfcba063c70ca4332fc",
@@ -1384,6 +1388,7 @@
     "dependencies": [
       "jsr:@fresh/core@^2.1.1",
       "jsr:@fresh/plugin-vite@^1.0.4",
+      "jsr:@libs/qrcode@3",
       "jsr:@preact-icons/md@^1.0.13",
       "jsr:@preact-icons/tb@^1.0.14",
       "jsr:@std/assert@^1.0.14",

@@ -7,6 +7,7 @@ import { MdGroup } from "@preact-icons/md";
 import Conditional from "../../components/Conditional.tsx";
 import CopyButton from "../../islands/CopyButton.tsx";
 import DeleteUserButton from "../../islands/DeleteUserButton.tsx";
+import LoginCode from "../../islands/LoginCode.tsx";
 
 export const handler = define.handlers({
   GET({ req, state }) {
@@ -77,6 +78,9 @@ export default define.page<typeof handler>(
                         </li>
                         <li>
                           Created On: {Dates.formatIso(value.createdOn)}
+                        </li>
+                        <li>
+                          <LoginCode userId={key.at(1)?.toString()} />
                         </li>
                         <li class="flex text-xs text-slate-500 mt-1">
                           <CopyButton
