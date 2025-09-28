@@ -1,6 +1,11 @@
 import { Users } from "../../../data/Users.ts";
 import { Cookies } from "../../../utilities/Cookies.ts";
-import { define, makeJsonResponse } from "../../../utils.ts";
+import { signup } from "../../../utilities/security.ts";
+import {
+  define,
+  makeJsonResponse,
+  makeRedirectResponse,
+} from "../../../utils.ts";
 
 export const handler = define.handlers({
   GET({ req }) {
@@ -9,8 +14,28 @@ export const handler = define.handlers({
 
     return new Response();
   },
-  POST() {
-    return new Response();
+  async POST({ req, params }) {
+    const sessionId = Cookies.get(req.headers, Cookies.Auth);
+    if (!sessionId) return new Response("Unauthenticaed", { status: 401 });
+
+    const { id } = params;
+    if (!id) {
+      return makeJsonResponse(
+        { errors: ["Missing user id in route param."] },
+        400,
+      );
+    }
+
+    const form = await req.formData();
+    const firstName = (form.get("firstName") ?? "").toString().trim();
+    const lastName = (form.get("lastName") ?? "").toString().trim();
+
+    const userSuccess = await signup(firstName, lastName);
+    if (!userSuccess.success) {
+      return makeJsonResponse({ errors: userSuccess.errors }, 400);
+    }
+
+    return makeRedirectResponse(new Headers(req.headers), "/profiles");
   },
   PATCH() {
     return new Response();
