@@ -5,7 +5,6 @@ import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
 import { GroupmeIntegration } from "../../types/Groupme.ts";
 import { Sessions } from "../../data/Sessions.ts";
 import { Users } from "../../data/Users.ts";
-import { AsyncLocalStorage } from "node:async_hooks";
 
 export const handler = define.middleware(async (ctx) => {
   const { req, state, url } = ctx;
@@ -22,8 +21,8 @@ export const handler = define.middleware(async (ctx) => {
   state.errors = Cookies.getErrors(req.headers);
 
   // if an auth cookie exists with session id, attempt to access it
-  const localId = localStorage.getItem(Cookies.Auth);
-  console.log('localId', localId);
+  const localId = globalThis.localStorage.getItem(Cookies.Auth);
+  console.log("localId", localId);
   const sessionId = Cookies.get(req, Cookies.Auth) || localId;
 
   if (sessionId) {
@@ -79,7 +78,7 @@ export const handler = define.middleware(async (ctx) => {
         headers,
         cookie: { name: Cookies.Auth, value: sessionId },
       });
-      localStorage.setItem(Cookies.Auth, sessionId);
+      globalThis.localStorage.setItem(Cookies.Auth, sessionId);
       // don't need token or groupme stuff anymore
       Cookies.clear(headers, [Cookies.Token, Cookies.Groupme]);
       return makeRedirectResponse(headers, "/");

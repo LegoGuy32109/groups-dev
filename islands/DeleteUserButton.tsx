@@ -24,7 +24,7 @@ export default function DeleteUserButton(
     if (response.errors) {
       console.error(response.errors);
     } else {
-       globalThis.location.reload()
+      globalThis.location.reload();
     }
   }
 
