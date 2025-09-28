@@ -90,10 +90,10 @@ export class Db {
     causedBy?: string, // guid
   ): AsyncResult {
     const kv = await Db.kv();
-    const today = Dates.getMonthDay();
+    const today = Dates.getDateKey();
     const now = Dates.getNowIso();
 
-    const key = ["attendance", group, today];
+    const key = ["attendance", today, group];
     const existsValue = await kv.get<Attendance>(key);
 
     // first counter

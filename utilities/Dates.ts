@@ -2,7 +2,7 @@ export class Dates {
   static getNowIso(): string {
     return new Date(Date.now()).toISOString();
   }
-  static getDateParts(): { year: number; month: number; day: number } {
+  static getDateKey(): string {
     const now = new Date();
     const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone: "Etc/GMT+4",
@@ -17,7 +17,11 @@ export class Dates {
       __,
       { value: yearString },
     ] = formatter.formatToParts(now);
-    const [year, month, day] = [yearString, monthString, dayString].map(
+
+    return `${yearString}-${monthString}-${dayString}`;
+  }
+  static getDateParts(): { year: number; month: number; day: number } {
+    const [year, month, day] = Dates.getDateKey().split("-").map(
       (value) => parseInt(value, 10),
     );
     return { year, month, day };

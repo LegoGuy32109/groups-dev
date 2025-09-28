@@ -41,7 +41,7 @@ export default function VerticalCounter(
         event.data,
       );
       for (const attendance of attendances) {
-        count.value = attendance.value.count;
+        count.value = attendance.value?.count ?? 0;
       }
     };
     return () => eventSource.close();
