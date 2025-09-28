@@ -3,12 +3,13 @@ import { TbMenu2 } from "@preact-icons/tb";
 import { State } from "../utils.ts";
 import HyrdrationBoundary from "../components/HydrationBoundary.tsx";
 import Conditional from "../components/Conditional.tsx";
+import RefreshButton from "./RefreshButton.tsx";
 
 export default function CornerMenu({ state }: { state: State }) {
   const overlayOpen = useSignal(false);
   if (!overlayOpen.value) {
     return (
-      <div class="fixed right-2 top-2 z-50">
+      <div class="fixed right-2 top-2 z-50 flex flex-col gap-2">
         <HyrdrationBoundary overlayClass="rounded-lg">
           <button
             type="button"
@@ -20,6 +21,7 @@ export default function CornerMenu({ state }: { state: State }) {
             <TbMenu2 class="text-slate-400" />
           </button>
         </HyrdrationBoundary>
+        <RefreshButton />
       </div>
     );
   }
