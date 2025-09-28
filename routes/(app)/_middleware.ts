@@ -21,9 +21,7 @@ export const handler = define.middleware(async (ctx) => {
   state.errors = Cookies.getErrors(req.headers);
 
   // if an auth cookie exists with session id, attempt to access it
-  const localId = globalThis.localStorage.getItem(Cookies.Auth);
-  console.log("localId", localId);
-  const sessionId = Cookies.get(req, Cookies.Auth) || localId;
+  const sessionId = Cookies.get(req, Cookies.Auth);
 
   if (sessionId) {
     const sessionResult = await Sessions.getSession(sessionId);
@@ -72,13 +70,15 @@ export const handler = define.middleware(async (ctx) => {
     }
     const { sessionId } = groupmeResult;
     if (sessionId) {
-      const headers = new Headers();
       // set cookie and refresh to home for normal authentication
-      Cookies.set({
-        headers,
-        cookie: { name: Cookies.Auth, value: sessionId },
+      const headers = Cookies.set({
+        headers: new Headers(req.headers),
+        cookie: {
+          name: Cookies.Auth,
+          value: sessionId,
+          maxAge: 14 * 24 * 3600,
+        },
       });
-      globalThis.localStorage.setItem(Cookies.Auth, sessionId);
       // don't need token or groupme stuff anymore
       Cookies.clear(headers, [Cookies.Token, Cookies.Groupme]);
       return makeRedirectResponse(headers, "/");
@@ -88,6 +88,18 @@ export const handler = define.middleware(async (ctx) => {
 
   // clear errors in error cookie if there are any
   const response = await ctx.next();
-  Cookies.clear(response.headers, Cookies.Error);
+  const headers = new Headers(response.headers);
+  Cookies.clear(headers, Cookies.Error);
+  // update auth rolling with each request, if sessionId exists
+  if (sessionId) {
+    Cookies.set({
+      headers,
+      cookie: {
+        name: Cookies.Auth,
+        value: sessionId,
+        maxAge: 14 * 24 * 3600,
+      },
+    });
+  }
   return response;
 });
