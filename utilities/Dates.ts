@@ -2,13 +2,29 @@ export class Dates {
   static getNowIso(): string {
     return new Date(Date.now()).toISOString();
   }
-  static getMonthDay(): string {
+  static getDateParts(): { year: number; month: number; day: number } {
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now.toISOString()
-      .split("T")[0]
-      .substring(5)
-      .replaceAll("-", "/");
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Etc/GMT+4",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const [
+      { value: monthString },
+      _,
+      { value: dayString },
+      __,
+      { value: yearString },
+    ] = formatter.formatToParts(now);
+    const [year, month, day] = [yearString, monthString, dayString].map(
+      (value) => parseInt(value, 10),
+    );
+    return { year, month, day };
+  }
+  static getMonthDay(): string {
+    const { month, day } = Dates.getDateParts();
+    return `${month}/${day}`;
   }
   static formatIso(isoString: string): string {
     const date = new Date(isoString);
