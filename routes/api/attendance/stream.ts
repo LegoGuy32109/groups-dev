@@ -10,9 +10,9 @@ export const handler = define.handlers({
 
     const groups: Array<string> =
       JSON.parse(decodeURIComponent(encodedGroups)) ?? [];
-    const today = Dates.getMonthDay();
+    const today = Dates.getDateKey();
     const kv = await Db.kv();
-    const keys = groups.map((group) => ["attendance", group, today]);
+    const keys = groups.map((group) => ["attendance", today, group]);
 
     const stream = kv.watch<Array<Attendance>>(keys).getReader();
     const body = new ReadableStream({

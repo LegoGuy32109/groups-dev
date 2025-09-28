@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-:root, html, body {
-  background-color: "#1d293d";
+html {
+  background-color: #1d293d;
+  margin: 0;
+  height: 100dvh;
   overscroll-behavior: none;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @layer base {}

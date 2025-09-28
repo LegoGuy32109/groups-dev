@@ -1,9 +1,10 @@
 import { UserAgent } from "@std/http/user-agent";
-import { GroupmeIntegration } from "../../types/entities/Groupme.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
-import { Db } from "../../utilities/Database.ts";
 import { groupmeLogin } from "../../utilities/security.ts";
 import { define, makeRedirectResponse, updateErrors } from "../../utils.ts";
+import { GroupmeIntegration } from "../../types/Groupme.ts";
+import { Sessions } from "../../data/Sessions.ts";
+import { Users } from "../../data/Users.ts";
 
 export const handler = define.middleware(async (ctx) => {
   const { req, state, url } = ctx;
@@ -21,10 +22,11 @@ export const handler = define.middleware(async (ctx) => {
 
   // if an auth cookie exists with session id, attempt to access it
   const sessionId = Cookies.get(req, Cookies.Auth);
+
   if (sessionId) {
-    const sessionResult = await Db.getSession(sessionId);
+    const sessionResult = await Sessions.getSession(sessionId);
     if (sessionResult.success) {
-      const profileResult = await Db.getUserProfile(
+      const profileResult = await Users.getUserProfile(
         sessionResult.session.userId,
       );
       if (profileResult.success) {
@@ -68,11 +70,14 @@ export const handler = define.middleware(async (ctx) => {
     }
     const { sessionId } = groupmeResult;
     if (sessionId) {
-      const headers = new Headers();
       // set cookie and refresh to home for normal authentication
-      Cookies.set({
-        headers,
-        cookie: { name: Cookies.Auth, value: sessionId },
+      const headers = Cookies.set({
+        headers: new Headers(req.headers),
+        cookie: {
+          name: Cookies.Auth,
+          value: sessionId,
+          maxAge: 14 * 24 * 3600,
+        },
       });
       // don't need token or groupme stuff anymore
       Cookies.clear(headers, [Cookies.Token, Cookies.Groupme]);
@@ -82,9 +87,19 @@ export const handler = define.middleware(async (ctx) => {
   console.error("Errors:", state.errors);
 
   // clear errors in error cookie if there are any
-  // return any route requested
   const response = await ctx.next();
-
-  Cookies.clear(response.headers, Cookies.Error);
+  const headers = new Headers(response.headers);
+  Cookies.clear(headers, Cookies.Error);
+  // update auth rolling with each request, if sessionId exists
+  if (sessionId) {
+    Cookies.set({
+      headers,
+      cookie: {
+        name: Cookies.Auth,
+        value: sessionId,
+        maxAge: 14 * 24 * 3600,
+      },
+    });
+  }
   return response;
 });

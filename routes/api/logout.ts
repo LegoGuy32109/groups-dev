@@ -1,5 +1,5 @@
+import { Sessions } from "../../data/Sessions.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
-import { Db } from "../../utilities/Database.ts";
 import { define, makeRedirectResponse } from "../../utils.ts";
 
 export const handler = define.handlers({
@@ -7,7 +7,7 @@ export const handler = define.handlers({
     const headers = new Headers(req.headers);
     const sessionId = Cookies.get(headers, Cookies.Auth);
     if (sessionId) {
-      const removeResult = await Db.removeSession(sessionId);
+      const removeResult = await Sessions.removeSession(sessionId);
       if (!removeResult.success) {
         Cookies.set({
           headers,

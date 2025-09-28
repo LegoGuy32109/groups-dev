@@ -7,7 +7,7 @@ export default define.page(function App({ Component }) {
         <meta charset="utf-8" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover"
         />
         {/* Manifest */}
         <link rel="manifest" href="/app.webmanifest" />
@@ -16,18 +16,9 @@ export default define.page(function App({ Component }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
+          content="default"
         />
-        <meta
-          name="theme-color"
-          media="(prefers-color-scheme: light)"
-          content="#1d293d"
-        />
-        <meta
-          name="theme-color"
-          media="(prefers-color-scheme: dark)"
-          content="#1d293d"
-        />
+        <meta name="theme-color" content="#1d293d" />
 
         {/* App title on the home screen */}
         <meta name="apple-mobile-web-app-title" content="E91Students" />
