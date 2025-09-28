@@ -8,6 +8,7 @@ import Conditional from "../../components/Conditional.tsx";
 import CopyButton from "../../islands/CopyButton.tsx";
 import DeleteUserButton from "../../islands/DeleteUserButton.tsx";
 import LoginCode from "../../islands/LoginCode.tsx";
+import AddUserButton from "../../islands/AddUserButton.tsx";
 
 export const handler = define.handlers({
   GET({ req, state }) {
@@ -22,7 +23,7 @@ export const handler = define.handlers({
 });
 
 export default define.page<typeof handler>(
-  async function Page() {
+  async function Page({ state }) {
     const result = await Users.getAllProfileRecords();
 
     return (
@@ -31,17 +32,9 @@ export default define.page<typeof handler>(
           <title>E91Students - Profiles</title>
         </Head>
         <div class="flex flex-col w-full justify-start p-4 text-slate-300">
-          <h1 class="text-3xl mb-2">Group Leader Profiles</h1>
-          {
-            /* TODO:
-          <button
-            type="button"
-            class="my-4 bg-blue-800 rounded-3xl font-semibold text-2xl ring-slate-400 ring-1 max-w-[400px]"
-          >
-            New +
-          </button>
-            */
-          }
+          <h1 class="text-3xl">Group Leader Profiles</h1>
+          {/* TODO: hide if lacking permissions */}
+          <AddUserButton />
           <ul class="flex flex-col gap-2 wrap-break-word">
             {result.success &&
               result.profileRecords.map(({ key, value }) => (
@@ -89,19 +82,23 @@ export default define.page<typeof handler>(
                             userId={key.at(1)?.toString()}
                           />
                         </li>
-                        <li class="flex text-xs text-slate-500 mt-1">
-                          <CopyButton
-                            value={JSON.stringify(value, undefined, 2)}
-                          />
-                          <details>
-                            <summary class="flex ml-1">
-                              Object Value
-                            </summary>
-                            <pre class="whitespace-pre-wrap text-slate-300">
+                        <Conditional
+                          visible={state.profile?.firstName === "Josh"}
+                        >
+                          <li class="flex text-xs text-slate-500 mt-1">
+                            <CopyButton
+                              value={JSON.stringify(value, undefined, 2)}
+                            />
+                            <details>
+                              <summary class="flex ml-1">
+                                Object Value
+                              </summary>
+                              <pre class="whitespace-pre-wrap text-slate-300">
                              <code>{JSON.stringify(value, undefined, 2)}</code>
-                            </pre>
-                          </details>
-                        </li>
+                              </pre>
+                            </details>
+                          </li>
+                        </Conditional>
                       </ul>
                     </div>
                   </details>
