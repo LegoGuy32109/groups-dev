@@ -23,7 +23,7 @@ export const handler = define.handlers({
 });
 
 export default define.page<typeof handler>(
-  async function Page() {
+  async function Page({ state }) {
     const result = await Users.getAllProfileRecords();
 
     return (
@@ -82,19 +82,23 @@ export default define.page<typeof handler>(
                             userId={key.at(1)?.toString()}
                           />
                         </li>
-                        <li class="flex text-xs text-slate-500 mt-1">
-                          <CopyButton
-                            value={JSON.stringify(value, undefined, 2)}
-                          />
-                          <details>
-                            <summary class="flex ml-1">
-                              Object Value
-                            </summary>
-                            <pre class="whitespace-pre-wrap text-slate-300">
+                        <Conditional
+                          visible={state.profile?.firstName === "Josh"}
+                        >
+                          <li class="flex text-xs text-slate-500 mt-1">
+                            <CopyButton
+                              value={JSON.stringify(value, undefined, 2)}
+                            />
+                            <details>
+                              <summary class="flex ml-1">
+                                Object Value
+                              </summary>
+                              <pre class="whitespace-pre-wrap text-slate-300">
                              <code>{JSON.stringify(value, undefined, 2)}</code>
-                            </pre>
-                          </details>
-                        </li>
+                              </pre>
+                            </details>
+                          </li>
+                        </Conditional>
                       </ul>
                     </div>
                   </details>
