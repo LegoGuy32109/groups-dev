@@ -1,9 +1,17 @@
 name: Deploy
 on:
   push:
-    branches: dev
+    branches:
+      - main
+      - dev
   pull_request:
-    branches: dev
+    branches:
+      - main
+      - dev
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -26,11 +34,22 @@ jobs:
       - name: Build step
         run: "deno task build"
 
-      - name: Upload to Deno Deploy
+      # Deploy if on dev
+      - name: Upload to Deno Deploy (dev)
+        if: github.ref == 'refs/heads/dev'
         uses: denoland/deployctl@v1
         with:
           project: "dev-e91students"
           entrypoint: "./_fresh/server.js"
           root: ""
-          
+          exclude: .env
+
+      # Deploy if on main
+      - name: Upload to Deno Deploy (main)
+        if: github.ref == 'refs/heads/main'
+        uses: denoland/deployctl@v1
+        with:
+          project: "dev-e91students"
+          entrypoint: "./_fresh/server.js"
+          root: ""
           exclude: .env
