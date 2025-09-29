@@ -1,56 +1,40 @@
 {
-   "name": "E91Students",
+   "name": "Groups",
    "start_url": "/",
    "display": "fullscreen",
-   "id": "e91students",
+   "id": "groups",
    "background_color": "#1d293d",
    "theme_color": "#1d293d",
    "orientation": "portrait",
-   "description": "East 91st Street's Students Ministry",
+   "description": "Group Attendance Tracker",
    "categories": [ "utilities", "education", "events", "productivity" ],
    "screenshots": [
       {
-         "src": "/e91StudentsLogo_1024px.png",
+         "src": "/groupLogo/groupLogo_1024px.png",
          "type": "image/png",
          "sizes": "1024x1024"
       },
       {
-         "src": "/e91StudentsLogo_1024px.png",
+         "src": "/groupLogo/groupLogo_2048px.png",
          "type": "image/png",
          "form_factor": "wide",
-         "sizes": "1024x1024"
+         "sizes": "2048x2048"
       }
    ],
    "icons": [
       {
-         "src": "/e91StudentsLogo_1024px.png",
+         "src": "/groupLogo/groupLogo_1024px.png",
          "type": "image/png",
          "sizes": "1024x1024"
       },
       {
-         "src": "/e91StudentsLogo_512px.png",
+         "src": "/groupLogo/groupLogo_512px.png",
          "type": "image/png",
          "sizes": "512x512"
       },
       {
-         "src": "/e91StudentsLogo_180px.png",
-         "type": "image/png",
-         "sizes": "180x180"
-      },
-      {
-         "src": "/e91StudentsLogo_167px.png",
-         "type": "image/png",
-         "sizes": "167x167"
-      },
-      {
-         "src": "/e91StudentsLogo_152px.png",
-         "type": "image/png",
-         "sizes": "152x152"
-      },
-      {
-         "src": "/e91StudentsLogo_120px.png",
-         "type": "image/png",
-         "sizes": "120x120"
+         "src": "/favicon.ico",
+         "sizes": "256x256"
       }
    ]
 }
