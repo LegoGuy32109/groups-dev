@@ -92,6 +92,20 @@ export default define.page<typeof handler>(
               No GROUPME_AUTH_REDIRECT_URL is set for this deployment.
             </p>
           </Conditional>
+          <div class="bg-slate-400 text-slate-800 rounded-md mt-4 p-2">
+            <form>
+              <label>
+                I have an access code:{" "}
+                <input class="ml-1 mr-4 px-1 bg-slate-100 rounded-md w-20" type="text" />
+              </label>
+              <button
+                class="bg-slate-600 rounded-full text-slate-200 font-bold px-3 py-1 text-sm"
+                type="submit"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
         <p class="text-red-700 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
