@@ -50,21 +50,25 @@ export default function HyrdrationBoundary(
         }`}
         style={{ transition: `opacity ${fadeMs}ms ease` }}
       >
-        <svg
-          width="150"
-          height="150"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            class="fill-white"
-            style={{
-              transformOrigin: "center",
-              animation: "spinner_y6GP 0.75s linear infinite",
-            }}
-            d="M12,23a9.63,9.63,0,0,1-8-9.5,9.51,9.51,0,0,1,6.79-9.1A1.66,1.66,0,0,0,12,2.81h0a1.67,1.67,0,0,0-1.94-1.64A11,11,0,0,0,12,23Z"
-          />
-        </svg>
+          <svg
+            width="240"
+            height="240"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g class="spinner_group">
+              <circle
+                cx="12"
+                cy="12"
+                r="9.5"
+                pathLength="100"
+                fill="none"
+                stroke="#e2e8f0"
+                stroke-width="4.5"
+              >
+              </circle>
+            </g>
+          </svg>
       </div>
     </div>
   );

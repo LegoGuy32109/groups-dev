@@ -96,7 +96,10 @@ export default define.page<typeof handler>(
             <form>
               <label>
                 I have an access code:{" "}
-                <input class="ml-1 mr-4 px-1 bg-slate-100 rounded-md w-20" type="text" />
+                <input
+                  class="ml-1 mr-4 px-1 bg-slate-100 rounded-md w-20"
+                  type="text"
+                />
               </label>
               <button
                 class="bg-slate-600 rounded-full text-slate-200 font-bold px-3 py-1 text-sm"
