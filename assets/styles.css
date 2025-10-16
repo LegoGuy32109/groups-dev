@@ -44,32 +44,32 @@ html {
 }
 
 .spinner_group {
-   transform-origin:center;
-   animation:spinner_group_anim 2s linear infinite
+  transform-origin: center;
+  animation: spinner_group_anim 2s linear infinite;
 }
 
 .spinner_group circle {
-   animation:spinner_circle_anim 3s ease-in-out infinite
+  animation: spinner_circle_anim 3s ease-in-out infinite;
 }
 
 @keyframes spinner_group_anim {
-   100% {
-      transform:rotate(360deg)
-   }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spinner_circle_anim {
-   0%, 10% {
-      stroke-dasharray:4 5 4 5 4 5 4 69;
-   }
+  0%, 10% {
+    stroke-dasharray: 4 5 4 5 4 5 4 69;
+  }
 
-   47.5%, 70% {
-      stroke-dasharray:19 6;
-      stroke-dashoffset: -20;
-   }
-   
-   95%,100% {
-      stroke-dasharray:4 5 4 5 4 5 4 69;
-      stroke-dashoffset: -100; /* carries us exactly one full circumference forward */
-   }
+  47.5%, 70% {
+    stroke-dasharray: 19 6;
+    stroke-dashoffset: -20;
+  }
+
+  95%, 100% {
+    stroke-dasharray: 4 5 4 5 4 5 4 69;
+    stroke-dashoffset: -100; /* carries us exactly one full circumference forward */
+  }
 }

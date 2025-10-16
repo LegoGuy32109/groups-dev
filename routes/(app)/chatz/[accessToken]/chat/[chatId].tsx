@@ -11,7 +11,7 @@ export default define.page(
         beforeMessageId ? `&before_id=${beforeMessageId}` : ""
       }`,
     );
-    console.log(chatsResult)
+    console.log(chatsResult);
 
     if (!chatsResult.ok) {
       return (
@@ -91,7 +91,7 @@ export default define.page(
                   href={`/chatz/${params.accessToken}/chat/${params.chatId}?before_id=${message.id}`}
                   class="fixed bottom-2 right-2 m-1 p-2 bg-blue-800/30 rounded-full"
                 >
-                {messages.length} Next Page ➡️
+                  {messages.length} Next Page ➡️
                 </a>
               </Conditional>
             </div>

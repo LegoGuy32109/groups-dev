@@ -24,7 +24,8 @@ export default define.page(function App({ Component }) {
         {/* App title on the home screen */}
         <meta name="apple-mobile-web-app-title" content="E91Students" />
 
-        {/* Home screen icons (different sizes for devices)
+        {
+          /* Home screen icons (different sizes for devices)
         <link rel="apple-touch-icon" href="/e91StudentsLogo_180px.png" />
         <link
           rel="apple-touch-icon"
@@ -46,7 +47,8 @@ export default define.page(function App({ Component }) {
           sizes="180x180"
           href="/e91StudentsLogo_180px.png"
         />
- */}
+ */
+        }
         <title>E91Students</title>
       </head>
       <body>

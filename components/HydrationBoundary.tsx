@@ -9,12 +9,7 @@ interface HydrationBoundaryProps {
 }
 
 export default function HyrdrationBoundary(
-  {
-    children,
-    fallback,
-    overlayClass,
-    fadeMs = 100,
-  }: HydrationBoundaryProps,
+  { children, fallback, overlayClass, fadeMs = 100 }: HydrationBoundaryProps,
 ) {
   // when javascript is loaded on the page,
   // hydrated will be true then remove fallback / overlay
@@ -50,25 +45,25 @@ export default function HyrdrationBoundary(
         }`}
         style={{ transition: `opacity ${fadeMs}ms ease` }}
       >
-          <svg
-            width="240"
-            height="240"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g class="spinner_group">
-              <circle
-                cx="12"
-                cy="12"
-                r="9.5"
-                pathLength="100"
-                fill="none"
-                stroke="#e2e8f0"
-                stroke-width="4.5"
-              >
-              </circle>
-            </g>
-          </svg>
+        <svg
+          width="240"
+          height="240"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g class="spinner_group">
+            <circle
+              cx="12"
+              cy="12"
+              r="9.5"
+              pathLength="100"
+              fill="none"
+              stroke="#e2e8f0"
+              stroke-width="4.5"
+            >
+            </circle>
+          </g>
+        </svg>
       </div>
     </div>
   );
