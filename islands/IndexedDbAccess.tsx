@@ -1,28 +1,34 @@
 import { IS_BROWSER } from "fresh/runtime";
-import {
+import IDB, {
   deleteItem,
   openGroupsDb,
   readTable,
   saveUserData,
-} from "../data/IndexDb.ts";
+  Tables,
+} from "../data/IndexedDB.ts";
 import { useSignal } from "@preact/signals";
 import { Dates } from "../utilities/Dates.ts";
+import { useEffect } from "preact/hooks";
 
 export default function IndexedDbAccess() {
   const logins = useSignal<Array<[unknown, unknown]>>();
 
-  if (IS_BROWSER) {
-    (async () => {
-      await openGroupsDb();
-      const total = await readTable("locations", {
-        // direction: "prev",
-        // limit: 2,
-        // excludeStartAtValue: true,
-        // startAtValue: "2025-10-21T02:29:08.576Z",
-      });
-      logins.value = total;
-    })();
-  }
+  // load logins on mount
+  useEffect(() => {
+    if (IS_BROWSER) {
+      (async () => {
+        await openGroupsDb();
+        const total = await readTable("locations", {
+          // direction: "prev",
+          // limit: 2,
+          // excludeStartAtValue: true,
+          // startAtValue: "2025-10-21T02:29:08.576Z",
+        });
+        logins.value = total;
+      })();
+    }
+  }, []);
+
   return (
     <div class="text-fuchsia-50 opacity-90 flex flex-col w-screen h-screen justify-center items-center">
       <h1 class="text-6xl pb-2">Logins</h1>
@@ -34,12 +40,31 @@ export default function IndexedDbAccess() {
               onDblClick={() => deleteItem("locations", String(key))}
             >
               {Dates.formatIso(String(key))} -{" "}
-              <span class="text-xs block truncate max-w-full">{String(userAgent)}</span>
+              <span class="text-xs block truncate max-w-full">
+                {String(userAgent)}
+              </span>
             </li>
           ))}
         </ul>
       </div>
-      <button type="button" onClick={() => saveUserData()}>New +</button>
+      <button
+        type="button"
+        onClick={async () => {
+          const updateResult = await IDB.saveLogin();
+          if (!updateResult.ok) console.error(updateResult.errors)
+
+          const result = await IDB.readTable(Tables.Locations, {
+            // direction: "prev",
+            // startAtValue: "2025-10-21T02:29:08.576Z",
+          });
+          if (result.ok) {
+            console.log(result.total);
+            logins.value = result.total;
+          }
+        }}
+      >
+        New +
+      </button>
     </div>
   );
 }

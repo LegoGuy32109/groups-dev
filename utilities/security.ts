@@ -3,14 +3,9 @@ import { Profile } from "../types/entities/Profile.ts";
 import { Session } from "../types/entities/Session.ts";
 import { Db } from "./Database.ts";
 import { Dates } from "./Dates.ts";
-import { Errors } from "./Errors.ts";
+import { AsyncResult, Errors } from "./Errors.ts";
 import { Users } from "../data/Users.ts";
 import { Sessions } from "../data/Sessions.ts";
-
-export type AsyncResult<T = void> = Promise<Result<T>>;
-export type Result<T = void> = T extends void
-  ? { success: true } | { success: false; errors: Array<string> }
-  : T & { success: true } | { success: false; errors: Array<string> };
 
 const HASHING_ITERATIONS = 100_000;
 
