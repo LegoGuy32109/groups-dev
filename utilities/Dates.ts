@@ -1,6 +1,6 @@
 export class Dates {
   static getNowIso(): string {
-    return new Date(Date.now()).toISOString();
+    return new Date().toISOString();
   }
   static getDateKey(): string {
     const now = new Date();
