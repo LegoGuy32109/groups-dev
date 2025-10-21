@@ -1,11 +1,5 @@
 import { IS_BROWSER } from "fresh/runtime";
-import IDB, {
-  deleteItem,
-  openGroupsDb,
-  readTable,
-  saveUserData,
-  Tables,
-} from "../data/IndexedDB.ts";
+import IDB, { Tables } from "../data/IndexedDB.ts";
 import { useSignal } from "@preact/signals";
 import { Dates } from "../utilities/Dates.ts";
 import { useEffect } from "preact/hooks";
@@ -13,20 +7,19 @@ import { useEffect } from "preact/hooks";
 export default function IndexedDbAccess() {
   const logins = useSignal<Array<[unknown, unknown]>>();
 
+  async function refresh() {
+    if (!IS_BROWSER) return;
+    const result = await IDB.readTable(Tables.Locations);
+    if (result.ok) {
+      logins.value = result.total;
+    } else {
+      console.error(result.errors);
+    }
+  }
+
   // load logins on mount
   useEffect(() => {
-    if (IS_BROWSER) {
-      (async () => {
-        await openGroupsDb();
-        const total = await readTable("locations", {
-          // direction: "prev",
-          // limit: 2,
-          // excludeStartAtValue: true,
-          // startAtValue: "2025-10-21T02:29:08.576Z",
-        });
-        logins.value = total;
-      })();
-    }
+    refresh();
   }, []);
 
   return (
@@ -37,7 +30,17 @@ export default function IndexedDbAccess() {
           {logins.value?.map(([key, userAgent]) => (
             <li
               key={key}
-              onDblClick={() => deleteItem("locations", String(key))}
+              onDblClick={async () => {
+                const deleteResult = await IDB.deleteItem(
+                  Tables.Locations,
+                  String(key),
+                );
+                if (!deleteResult.ok) {
+                  console.error(deleteResult.errors);
+                  return;
+                }
+                refresh();
+              }}
             >
               {Dates.formatIso(String(key))} -{" "}
               <span class="text-xs block truncate max-w-full">
@@ -51,7 +54,7 @@ export default function IndexedDbAccess() {
         type="button"
         onClick={async () => {
           const updateResult = await IDB.saveLogin();
-          if (!updateResult.ok) console.error(updateResult.errors)
+          if (!updateResult.ok) console.error(updateResult.errors);
 
           const result = await IDB.readTable(Tables.Locations, {
             // direction: "prev",
