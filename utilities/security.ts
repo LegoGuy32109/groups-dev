@@ -6,8 +6,18 @@ import { Dates } from "./Dates.ts";
 import { AsyncResult, Errors } from "./Errors.ts";
 import { Users } from "../data/Users.ts";
 import { Sessions } from "../data/Sessions.ts";
+import crypto from "node:crypto";
 
 const HASHING_ITERATIONS = 100_000;
+
+export function generateAuthCredential(userId: string) {
+   console.log(userId)
+  const stringChallenge = toBase64(crypto.randomBytes(32));
+  console.log(stringChallenge)
+  const challenge = fromBase64(stringChallenge);
+  console.log(challenge);
+}
+generateAuthCredential(crypto.randomUUID());
 
 export function toBase64(u8: Uint8Array): string {
   return btoa(String.fromCharCode(...u8));

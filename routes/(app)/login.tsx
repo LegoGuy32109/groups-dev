@@ -4,6 +4,8 @@ import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Users } from "../../data/Users.ts";
 import Conditional from "../../components/Conditional.tsx";
+import { TbFaceId } from "@preact-icons/tb";
+import SetupBioAuth from "../../islands/SetupBioAuth.tsx";
 
 export const handler = define.handlers({
   async GET({ req, state }) {
@@ -44,17 +46,17 @@ export const handler = define.handlers({
 const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
-  ({ req, state, data }) => {
-    const cookie = req.headers.get("cookie");
-    console.log(cookie);
-
+  ({ state, data }) => {
     // if already logged in, prevent UI to login again
-    if (state.profile) {
+    if (state.session && state.profile) {
       return (
-        <h1 class="m-5 font-medium text-3xl text-slate-500 max-w-[350px]">
-          You're already logged in,{" "}
-          <a href="/api/logout" class="font-bold text-red-300">Logout?</a>
-        </h1>
+        <>
+          <h1 class="m-5 font-medium text-3xl text-slate-500 max-w-[350px]">
+            You're already logged in {state.profile.firstName},{" "}
+            <a href="/api/logout" class="font-bold text-red-300">Logout?</a>
+          </h1>
+          <SetupBioAuth userId={state.session?.userId} />
+        </>
       );
     }
 
@@ -63,8 +65,8 @@ export default define.page<typeof handler>(
 
     return (
       <div class="w-full h-screen min-h-full bg-slate-800 flex flex-col items-center justify-center overflow-auto">
-        <h1 class="font-semibold text-3xl text-slate-500 leading-relaxed tracking-wider">
-          Login to e91Students
+        <h1 class="font-semibold text-5xl text-slate-500 leading-relaxed tracking-wider text-shadow-md text-shadow-slate-900/90">
+          Login to Groups
         </h1>
         <div class="bg-slate-600 rounded-md p-5 font-semibold shadow-lg shadow-slate-900/90">
           <Conditional visible={!!GROUPME_AUTH_REDIRECT_URL}>
