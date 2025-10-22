@@ -8,7 +8,7 @@ export default function IndexedDbAccess() {
 
   async function refresh() {
     const result = await IDB.readTable(Tables.Locations, {
-       direction: "prev"
+      direction: "prev",
     });
     if (result.ok) {
       logins.value = result.total;

@@ -6,7 +6,7 @@ export type Result<T = undefined, F = string> = T extends undefined
   : T & { ok: true } | Fail<F>;
 
 export type Fail<F = string> = { ok: false; errors: ErrorList<F> };
-export type ErrorList<F> = Array<
+export type ErrorList<F = string> = Array<
   string | { message: string; data?: unknown; field?: string; type?: F }
 >;
 
