@@ -8,7 +8,7 @@ export const handler = define.handlers({
       return makeJsonResponse({ errors: ["No userId in request."] }, 400);
     }
     const response = await createLoginToken(params.userId);
-    if (!response.success) {
+    if (!response.ok) {
       return makeJsonResponse({ errors: response.errors }, 400);
     }
 

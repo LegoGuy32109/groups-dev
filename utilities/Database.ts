@@ -1,7 +1,6 @@
 import { Attendance } from "../types/entities/Attendance.ts";
 import { Dates } from "./Dates.ts";
-import { Errors } from "./Errors.ts";
-import { AsyncResult } from "./security.ts";
+import { AsyncResult, Errors } from "./Errors.ts";
 
 interface DbOptions {
   test?: boolean;
@@ -59,7 +58,7 @@ export class Db {
       return Errors.make(`No userId found for groupme id '${id}'`);
     }
 
-    return { success: true, userId };
+    return { ok: true, userId };
   }
 
   static async deleteAllDataInTable(table: string) {
@@ -115,7 +114,7 @@ export class Db {
           return Errors.make("Failed to create new value");
         }
       }
-      return { success: true };
+      return { ok: true };
     }
     // counter already exists
     const other = await kv.atomic()
@@ -131,7 +130,7 @@ export class Db {
     if (!other.ok) {
       return Errors.make("Failed to create new value");
     }
-    return { success: true };
+    return { ok: true };
   }
 
   static async getTokenValue(
@@ -144,6 +143,6 @@ export class Db {
     if (!tokenResult.value) {
       return Errors.make(`Token '${possibleToken}' is Invalid or Expired.`);
     }
-    return { success: true, userId: tokenResult.value.userId };
+    return { ok: true, userId: tokenResult.value.userId };
   }
 }

@@ -1,4 +1,3 @@
-import { IS_BROWSER } from "fresh/runtime";
 import IDB, { Tables } from "../data/IndexedDB.ts";
 import { useSignal } from "@preact/signals";
 import { Dates } from "../utilities/Dates.ts";
@@ -8,8 +7,9 @@ export default function IndexedDbAccess() {
   const logins = useSignal<Array<[unknown, unknown]>>();
 
   async function refresh() {
-    if (!IS_BROWSER) return;
-    const result = await IDB.readTable(Tables.Locations);
+    const result = await IDB.readTable(Tables.Locations, {
+       direction: "prev"
+    });
     if (result.ok) {
       logins.value = result.total;
     } else {
@@ -17,7 +17,7 @@ export default function IndexedDbAccess() {
     }
   }
 
-  // load logins on mount
+  // load data on mount, only in browser
   useEffect(() => {
     refresh();
   }, []);
@@ -55,15 +55,7 @@ export default function IndexedDbAccess() {
         onClick={async () => {
           const updateResult = await IDB.saveLogin();
           if (!updateResult.ok) console.error(updateResult.errors);
-
-          const result = await IDB.readTable(Tables.Locations, {
-            // direction: "prev",
-            // startAtValue: "2025-10-21T02:29:08.576Z",
-          });
-          if (result.ok) {
-            console.log(result.total);
-            logins.value = result.total;
-          }
+          refresh();
         }}
       >
         New +

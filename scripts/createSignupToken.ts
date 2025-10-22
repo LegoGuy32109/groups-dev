@@ -17,7 +17,7 @@ async function makeTokenLink(
   defaultGroup?: string,
 ) {
   const signupResult = await signup(firstName, lastName, defaultGroup);
-  if (signupResult.success) {
+  if (signupResult.ok) {
     console.log(
       `Hi ${firstName}! This is Josh the tech admin for E91Students sunday nights. 
 I'm sending you this link so you can access our Attendance tracker 2.0

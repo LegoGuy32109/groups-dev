@@ -11,83 +11,6 @@ export enum Tables {
 export default class IDB {
   private static _db: IDBDatabase | undefined = undefined;
 
-  private static async withDb<T, F = string>(
-    logic: (db: IDBDatabase) => AsyncResult<T, F>,
-  ): Promise<Result<T, F> | Fail<F>> {
-    if (IDB._db) {
-      return logic(IDB._db);
-    }
-    const result = await IDB.instantiate();
-    if (!result.ok) return result as Fail<F>;
-    return logic(result.db);
-  }
-
-  public static readTable = (table: Tables, options?: {
-    direction?: IDBCursorDirection;
-    limit?: number;
-    startAtValue?: unknown;
-    excludeStartAtValue?: boolean;
-  }): AsyncResult<{ total: Array<[unknown, unknown]> }> =>
-    IDB.withDb((db) => {
-      const bound = ["prev", "prevunique"].includes(options?.direction ?? "")
-        ? IDBKeyRange.upperBound
-        : IDBKeyRange.lowerBound;
-      const range = options?.startAtValue
-        ? bound(
-          options.startAtValue,
-          options?.excludeStartAtValue,
-        )
-        : undefined;
-
-      return new Promise((resolve) => {
-        const total = [] as Array<[unknown, unknown]>;
-        const store = db.transaction(table).objectStore(table);
-        const transaction = store.openCursor(range, options?.direction);
-        transaction.onerror = (ev) => {
-          resolve({
-            ok: false,
-            errors: [{ message: "Error Opening Cursor", data: ev }],
-          });
-          return;
-        };
-        transaction.onsuccess = (ev) => {
-          const { result: cursor } = ev.target as IDBRequest<
-            IDBCursorWithValue
-          >;
-          if (!cursor || options?.limit && total.length >= options.limit) {
-            resolve({ ok: true, total });
-            return;
-          }
-
-          total.push([cursor.key, cursor.value]);
-          cursor.continue();
-        };
-      });
-    });
-
-  public static saveLogin = () =>
-    IDB.withDb((db) => {
-      const userAgent = globalThis.navigator.userAgent;
-      return new Promise((resolve) => {
-        const locations = db.transaction("locations", "readwrite").objectStore(
-          "locations",
-        );
-        const request = locations.add(userAgent, Dates.getNowIso());
-        request.onerror = (ev) => {
-          resolve({
-            ok: false,
-            errors: [{
-              message: "Failed to save login to IndexedDB",
-              data: ev,
-            }],
-          });
-        };
-        request.onsuccess = () => {
-          resolve({ ok: true });
-        };
-      }) as AsyncResult;
-    });
-
   private static instantiate(): AsyncResult<{ db: IDBDatabase }> {
     return new Promise((resolve) => {
       if (!IS_BROWSER) {
@@ -139,23 +62,105 @@ export default class IDB {
     });
   }
 
+  // All IndexedDB functions use event listeners, so they are contructed with a promise
+  // the function is provided a database instance and a resolver to the Promise
+  private static async withDb<T, F = string>(
+    logic: (
+      db: IDBDatabase,
+      resolve: (result: Result<T, F>) => void,
+    ) => void,
+  ): Promise<Result<T, F> | Fail<F>> {
+    let db;
+    if (IDB._db) {
+      // Singleton already instantiated
+      db = IDB._db;
+    } else {
+      // need to instantiate Singleton
+      const result = await IDB.instantiate();
+      if (!result.ok) return result as Fail<F>;
+      db = result.db;
+    }
+
+    return new Promise((resolve) => logic(db, resolve));
+  }
+
+  public static readTable = (table: Tables, options?: {
+    direction?: IDBCursorDirection;
+    limit?: number;
+    startAtValue?: unknown;
+    excludeStartAtValue?: boolean;
+  }): AsyncResult<{ total: Array<[unknown, unknown]> }> =>
+    IDB.withDb((db, resolve) => {
+      const bound = ["prev", "prevunique"].includes(options?.direction ?? "")
+        ? IDBKeyRange.upperBound
+        : IDBKeyRange.lowerBound;
+      const range = options?.startAtValue
+        ? bound(
+          options.startAtValue,
+          options?.excludeStartAtValue,
+        )
+        : undefined;
+
+      const total = [] as Array<[unknown, unknown]>;
+      const store = db.transaction(table).objectStore(table);
+      const transaction = store.openCursor(range, options?.direction);
+      transaction.onerror = (ev) => {
+        resolve({
+          ok: false,
+          errors: [{ message: "Error Opening Cursor", data: ev }],
+        });
+        return;
+      };
+      transaction.onsuccess = (ev) => {
+        const { result: cursor } = ev.target as IDBRequest<
+          IDBCursorWithValue
+        >;
+        if (!cursor || options?.limit && total.length >= options.limit) {
+          resolve({ ok: true, total });
+          return;
+        }
+
+        total.push([cursor.key, cursor.value]);
+        cursor.continue();
+      };
+    });
+
+  public static saveLogin = () =>
+    IDB.withDb((db, resolve) => {
+      const userAgent = globalThis.navigator.userAgent;
+      const locations = db.transaction("locations", "readwrite").objectStore(
+        "locations",
+      );
+      const request = locations.add(userAgent, Dates.getNowIso());
+      request.onerror = (ev) => {
+        resolve({
+          ok: false,
+          errors: [{
+            message: "Failed to save login to IndexedDB",
+            data: ev,
+          }],
+        });
+      };
+      request.onsuccess = () => {
+        resolve({ ok: true });
+      };
+    });
+
   public static deleteItem = (table: string, key: string): AsyncResult =>
-    IDB.withDb((db) => {
-      return new Promise((resolve) => {
-        const store = db.transaction(table, "readwrite").objectStore(table);
-        const deleteResult = store.delete(key);
-        deleteResult.onsuccess = () => {
-          resolve({ ok: true });
-        };
-        deleteResult.onerror = (event) => {
-          resolve({
-            ok: false,
-            errors: [{
-              data: event,
-              message: `Failed to delete ${key} from ${table}`,
-            }],
-          });
-        };
-      }) as AsyncResult;
+    IDB.withDb((db, resolve) => {
+      const store = db.transaction(table, "readwrite").objectStore(table);
+      const deleteResult = store.delete(key);
+      deleteResult.onsuccess = () => {
+        resolve({ ok: true });
+      };
+      deleteResult.onerror = (event) => {
+        resolve({
+          ok: false,
+          errors: [{
+            data: event,
+            message: `Failed to delete ${key} from ${table}`,
+          }],
+        });
+      };
     });
 }

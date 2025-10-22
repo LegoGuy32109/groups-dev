@@ -6,7 +6,7 @@ import { define } from "../../../utils.ts";
 export default define.page(
   async function Page() {
     const profilesResult = await Users.getAllProfileRecords();
-    if (!profilesResult.success) {
+    if (!profilesResult.ok) {
       return (
         <h1 class="font-extrabold text-5xl text-red-300">
           Failed to access Chatz

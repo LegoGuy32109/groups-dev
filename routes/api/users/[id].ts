@@ -31,7 +31,7 @@ export const handler = define.handlers({
     const lastName = (form.get("lastName") ?? "").toString().trim();
 
     const userSuccess = await signup(firstName, lastName);
-    if (!userSuccess.success) {
+    if (!userSuccess.ok) {
       return makeJsonResponse({ errors: userSuccess.errors }, 400);
     }
 
@@ -55,7 +55,7 @@ export const handler = define.handlers({
       }
 
       const result = await Users.deleteUser(params.id);
-      if (!result.success) {
+      if (!result.ok) {
         return makeJsonResponse({ errors: result.errors }, 404);
       }
       const { deletedRecords } = result;

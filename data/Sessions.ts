@@ -1,7 +1,6 @@
 import { Session } from "../types/entities/Session.ts";
 import { Db } from "../utilities/Database.ts";
-import { Errors } from "../utilities/Errors.ts";
-import { AsyncResult } from "../utilities/security.ts";
+import { AsyncResult, Errors } from "../utilities/Errors.ts";
 
 export class Sessions {
   /**
@@ -29,7 +28,7 @@ export class Sessions {
       );
     }
 
-    return { success: true };
+    return { ok: true };
   }
 
   static async getSession(
@@ -42,7 +41,7 @@ export class Sessions {
       return Errors.make(`No session found with id '${sessionId}'`);
     }
 
-    return { success: true, session };
+    return { ok: true, session };
   }
 
   static async getUserSessionIds(
@@ -59,7 +58,7 @@ export class Sessions {
       return Errors.make(`Failed to find sessions for userId: '${userId}'`);
     }
 
-    return { success: true, sessionIds };
+    return { ok: true, sessionIds };
   }
 
   static async getUserSessions(
@@ -68,7 +67,7 @@ export class Sessions {
     const kv = await Db.kv();
 
     const sessionIdsResult = await Sessions.getUserSessionIds(userId);
-    if (!sessionIdsResult.success) return sessionIdsResult;
+    if (!sessionIdsResult.ok) return sessionIdsResult;
     const { sessionIds } = sessionIdsResult;
 
     const sessionEntries = await kv.getMany<Array<Session>>(
@@ -97,7 +96,7 @@ export class Sessions {
       );
     }
 
-    return { success: true, sessions };
+    return { ok: true, sessions };
   }
 
   static async removeSession(
@@ -107,13 +106,13 @@ export class Sessions {
 
     // find user id in session record
     const sessionResult = await Sessions.getSession(sessionId);
-    if (!sessionResult.success) return sessionResult;
+    if (!sessionResult.ok) return sessionResult;
     const { session } = sessionResult;
     const { userId } = session;
 
     // get current sessions for user
     const sessionIdsResult = await Sessions.getUserSessionIds(userId);
-    if (!sessionIdsResult.success) return sessionIdsResult;
+    if (!sessionIdsResult.ok) return sessionIdsResult;
     const { sessionIds } = sessionIdsResult;
 
     // remove given session id
@@ -129,7 +128,7 @@ export class Sessions {
     }
 
     return {
-      success: true,
+      ok: true,
       deletedSession: session,
       userSessionIds: updatedSessionIds,
     };

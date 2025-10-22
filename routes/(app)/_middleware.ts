@@ -25,11 +25,11 @@ export const handler = define.middleware(async (ctx) => {
 
   if (sessionId) {
     const sessionResult = await Sessions.getSession(sessionId);
-    if (sessionResult.success) {
+    if (sessionResult.ok) {
       const profileResult = await Users.getUserProfile(
         sessionResult.session.userId,
       );
-      if (profileResult.success) {
+      if (profileResult.ok) {
         state.session = sessionResult.session;
         state.profile = profileResult.profile;
       } else {
@@ -64,7 +64,7 @@ export const handler = define.middleware(async (ctx) => {
       userId: Cookies.get(req, Cookies.Token),
       userAgent: new UserAgent(req.headers.get("user-agent")),
     });
-    if (!groupmeResult.success) {
+    if (!groupmeResult.ok) {
       updateErrors(state, groupmeResult.errors);
       break integrationCheck;
     }

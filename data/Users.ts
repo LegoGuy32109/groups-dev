@@ -2,8 +2,7 @@ import { Profile } from "../types/entities/Profile.ts";
 import { GroupmeIntegration } from "../types/Groupme.ts";
 import { Db } from "../utilities/Database.ts";
 import { Dates } from "../utilities/Dates.ts";
-import { Errors } from "../utilities/Errors.ts";
-import { AsyncResult } from "../utilities/security.ts";
+import { AsyncResult, Errors } from "../utilities/Errors.ts";
 
 export class Users {
   static async getUsers() {
@@ -28,7 +27,7 @@ export class Users {
       return Errors.make("No Profiles found.");
     }
 
-    return { success: true, profileRecords };
+    return { ok: true, profileRecords };
   }
 
   static async getUserProfile(
@@ -46,10 +45,10 @@ export class Users {
     if (!userProfile) {
       const errors = [];
       !userProfile && errors.push(`No profile found for '${userId}'`);
-      return { success: false, errors };
+      return { ok: false, errors };
     }
 
-    return { success: true, profile: userProfile };
+    return { ok: true, profile: userProfile };
   }
 
   static async updateUserProfileGroupme(
@@ -80,7 +79,7 @@ export class Users {
       return Errors.make("Failed to update user 'profile' record");
     }
 
-    return { success: true, profile: newProfile };
+    return { ok: true, profile: newProfile };
   }
 
   static async deleteUser(
@@ -125,7 +124,7 @@ export class Users {
     }
 
     return {
-      success: true,
+      ok: true,
       deletedRecords: [
         ...userRecords,
         groupmeRecord?.value ? groupmeRecord : "<no groupmeId record found>",

@@ -36,7 +36,7 @@ export default define.page<typeof handler>(
           {/* TODO: hide if lacking permissions */}
           <AddUserButton />
           <ul class="flex flex-col gap-2 wrap-break-word">
-            {result.success &&
+            {result.ok &&
               result.profileRecords.map(({ key, value }) => (
                 <li key={key}>
                   <details>

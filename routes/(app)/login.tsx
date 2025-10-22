@@ -15,14 +15,14 @@ export const handler = define.handlers({
     // token exists, attempt to grab from db
     const tokenResult = await Db.getTokenValue(possibleToken);
     // couldn't grab token from db
-    if (!tokenResult.success) {
+    if (!tokenResult.ok) {
       updateErrors(state, tokenResult.errors);
       return page();
     }
     const { userId } = tokenResult;
 
     const result = await Users.getUserProfile(userId);
-    if (!result.success) {
+    if (!result.ok) {
       updateErrors(state, result.errors);
       return page();
     }

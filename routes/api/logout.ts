@@ -8,7 +8,7 @@ export const handler = define.handlers({
     const sessionId = Cookies.get(headers, Cookies.Auth);
     if (sessionId) {
       const removeResult = await Sessions.removeSession(sessionId);
-      if (!removeResult.success) {
+      if (!removeResult.ok) {
         Cookies.set({
           headers,
           cookie: {

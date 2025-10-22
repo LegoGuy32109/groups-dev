@@ -65,13 +65,13 @@ export async function getPbkdf2Hash(
 // ): AsyncResult<{ sessionId: string }> {
 //   // find user id from username
 //   const userIdResult = await Db.getUserIdFromUsername(username);
-//   if (!userIdResult.success) {
+//   if (!userIdResult.ok) {
 //     return userIdResult;
 //   }
 //   const { userId } = userIdResult;
 //   // find auth from user id
 //   const userResult = await Db.getUserProfile(userId);
-//   if (!userResult.success) {
+//   if (!userResult.ok) {
 //     return userResult;
 //   }
 //   const { authentication } = userResult;
@@ -86,7 +86,7 @@ export async function getPbkdf2Hash(
 //   );
 //   if (!isCorrectPassword) {
 //     return {
-//       success: false,
+//       ok: false,
 //       errors: [`incorrect password for user '${username}'`],
 //     };
 //   }
@@ -105,11 +105,11 @@ export async function getPbkdf2Hash(
 //     newSessionId,
 //     newSessionRecord,
 //   );
-//   if (!addSessionResult.success) {
+//   if (!addSessionResult.ok) {
 //     return addSessionResult;
 //   }
 //   // return cookie for response in other function
-//   return { success: true, sessionId: newSessionId };
+//   return { ok: true, sessionId: newSessionId };
 // }
 //
 // export async function logout(
@@ -124,7 +124,7 @@ export async function createLoginToken(
   const kv = await Db.kv();
 
   const userResult = await Users.getUserProfile(userId);
-  if (!userResult.success) {
+  if (!userResult.ok) {
     return userResult;
   }
 
@@ -142,12 +142,12 @@ export async function createLoginToken(
 
   if (!createTokenResponse.ok) {
     return {
-      success: false,
+      ok: false,
       errors: ["Failed to create Token. Try again."],
     };
   }
 
-  return { success: true, token: prefillToken };
+  return { ok: true, token: prefillToken };
 }
 
 export async function signup(
@@ -205,12 +205,12 @@ export async function signup(
 
   if (!createUserResponse.ok) {
     return {
-      success: false,
+      ok: false,
       errors: ["User was created concurrently. Try again."],
     };
   }
 
-  return { success: true, userId: newUserId, token: prefillToken };
+  return { ok: true, userId: newUserId, token: prefillToken };
 }
 
 interface GroupmeLoginOptions {
@@ -249,7 +249,7 @@ export async function groupmeLogin(
   } else {
     // find user id from groupme.id we're assuming this isn't the first time
     const userIdResult = await Db.getUserIdFromGroupmeId(groupmeInfo.id);
-    if (!userIdResult.success) {
+    if (!userIdResult.ok) {
       return userIdResult;
     }
     userId = userIdResult.userId;
@@ -277,9 +277,9 @@ export async function groupmeLogin(
     newSessionId,
     newSessionRecord,
   );
-  if (!addSessionResult.success) {
+  if (!addSessionResult.ok) {
     return addSessionResult;
   }
   // return cookie for response in other function
-  return { success: true, sessionId: newSessionId };
+  return { ok: true, sessionId: newSessionId };
 }
