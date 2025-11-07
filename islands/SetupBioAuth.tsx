@@ -3,7 +3,7 @@ import { fromBase64, generateAuthCredential } from "../utilities/security.ts";
 
 export default function SetupBioAuth({ userId }: { userId: string }) {
   async function handleClick() {
-     generateAuthCredential(userId)
+    generateAuthCredential(userId);
     // const credential = await globalThis.navigator.credentials.create({
     //   publicKey: {
     //      user: {

@@ -4,7 +4,6 @@ import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Users } from "../../data/Users.ts";
 import Conditional from "../../components/Conditional.tsx";
-import { TbFaceId } from "@preact-icons/tb";
 import SetupBioAuth from "../../islands/SetupBioAuth.tsx";
 
 export const handler = define.handlers({
@@ -90,6 +89,8 @@ export default define.page<typeof handler>(
                 </div>
               </div>
             </a>
+          </Conditional>
+          <Conditional visible={!GROUPME_AUTH_REDIRECT_URL}>
             <p class="text-red-700 mt-2 font-mono">
               No GROUPME_AUTH_REDIRECT_URL is set for this deployment.
             </p>
