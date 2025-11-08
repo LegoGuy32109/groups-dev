@@ -40,8 +40,8 @@
     "npm:@opentelemetry/api@^1.9.0": "1.9.0",
     "npm:@preact/signals@^2.2.1": "2.4.0_preact@10.27.2",
     "npm:@preact/signals@^2.4.0": "2.4.0_preact@10.27.2",
-    "npm:@prefresh/vite@^2.4.8": "2.4.11_preact@10.27.2_vite@7.2.1__picomatch@4.0.3",
-    "npm:@tailwindcss/vite@^4.1.17": "4.1.17_vite@7.2.1__picomatch@4.0.3",
+    "npm:@prefresh/vite@^2.4.8": "2.4.11_preact@10.27.2_vite@7.2.2__picomatch@4.0.3",
+    "npm:@tailwindcss/vite@^4.1.17": "4.1.17_vite@7.2.2__picomatch@4.0.3",
     "npm:esbuild-wasm@~0.25.11": "0.25.12",
     "npm:esbuild@0.25.7": "0.25.7",
     "npm:preact-render-to-string@^6.6.3": "6.6.3_preact@10.27.2",
@@ -49,7 +49,7 @@
     "npm:preact@^10.27.0": "10.27.2",
     "npm:preact@^10.27.2": "10.27.2",
     "npm:tailwindcss@^4.1.17": "4.1.17",
-    "npm:vite@^7.2.1": "7.2.1_picomatch@4.0.3"
+    "npm:vite@^7.2.2": "7.2.2_picomatch@4.0.3"
   },
   "jsr": {
     "@deno/esbuild-plugin@1.2.0": {
@@ -570,7 +570,7 @@
     "@prefresh/utils@1.2.1": {
       "integrity": "sha512-vq/sIuN5nYfYzvyayXI4C2QkprfNaHUQ9ZX+3xLD8nL3rWyzpxOm1+K7RtMbhd+66QcaISViK7amjnheQ/4WZw=="
     },
-    "@prefresh/vite@2.4.11_preact@10.27.2_vite@7.2.1__picomatch@4.0.3": {
+    "@prefresh/vite@2.4.11_preact@10.27.2_vite@7.2.2__picomatch@4.0.3": {
       "integrity": "sha512-/XjURQqdRiCG3NpMmWqE9kJwrg9IchIOWHzulCfqg2sRe/8oQ1g5De7xrk9lbqPIQLn7ntBkKdqWXIj4E9YXyg==",
       "dependencies": [
         "@babel/core",
@@ -787,7 +787,7 @@
         "@tailwindcss/oxide-win32-x64-msvc"
       ]
     },
-    "@tailwindcss/vite@4.1.17_vite@7.2.1__picomatch@4.0.3": {
+    "@tailwindcss/vite@4.1.17_vite@7.2.2__picomatch@4.0.3": {
       "integrity": "sha512-4+9w8ZHOiGnpcGI6z1TVVfWaX/koK7fKeSYF3qlYg2xpBtbteP2ddBxiarL+HVgfSJGeK5RIxRQmKm4rTJJAwA==",
       "dependencies": [
         "@tailwindcss/node",
@@ -1100,8 +1100,8 @@
       ],
       "bin": true
     },
-    "vite@7.2.1_picomatch@4.0.3": {
-      "integrity": "sha512-qTl3VF7BvOupTR85Zc561sPEgxyUSNSvTQ9fit7DEMP7yPgvvIGm5Zfa1dOM+kOwWGNviK9uFM9ra77+OjK7lQ==",
+    "vite@7.2.2_picomatch@4.0.3": {
+      "integrity": "sha512-BxAKBWmIbrDgrokdGZH1IgkIk/5mMHDreLDmCJ0qpyJaAteP8NvMhkwr/ZCQNqNH97bw/dANTE9PDzqwJghfMQ==",
       "dependencies": [
         "esbuild",
         "fdir",
@@ -1132,7 +1132,7 @@
       "npm:@tailwindcss/vite@^4.1.17",
       "npm:preact@^10.27.2",
       "npm:tailwindcss@^4.1.17",
-      "npm:vite@^7.2.1"
+      "npm:vite@^7.2.2"
     ]
   }
 }

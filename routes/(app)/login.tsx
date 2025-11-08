@@ -91,7 +91,7 @@ export default define.page<typeof handler>(
             </a>
           </Conditional>
           <Conditional visible={!GROUPME_AUTH_REDIRECT_URL}>
-            <p class="text-red-700 mt-2 font-mono">
+            <p class="text-red-400 mt-2 font-mono">
               No GROUPME_AUTH_REDIRECT_URL is set for this deployment.
             </p>
           </Conditional>
@@ -113,7 +113,7 @@ export default define.page<typeof handler>(
             </form>
           </div>
         </div>
-        <p class="text-red-700 mt-2 font-mono">
+        <p class="text-red-400 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
         </p>
       </div>
