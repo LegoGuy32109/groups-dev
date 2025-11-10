@@ -1,3 +1,4 @@
+import { Credential } from "../types/entities/Credential.ts";
 import { Profile } from "../types/entities/Profile.ts";
 import { GroupmeIntegration } from "../types/Groupme.ts";
 import { Db } from "../utilities/Database.ts";
@@ -5,7 +6,7 @@ import { Dates } from "../utilities/Dates.ts";
 import { AsyncResult, Errors } from "../utilities/Errors.ts";
 
 export class Users {
-  static async getUsers() {
+  static async getAll() {
     const kv = await Db.kv();
 
     return await Array.fromAsync(kv.list({ prefix: ["users"] }));
@@ -30,31 +31,84 @@ export class Users {
     return { ok: true, profileRecords };
   }
 
-  static async getUserProfile(
+  static async setCredential(
     userId: string,
-  ): AsyncResult<{ profile: Profile }> {
+    credential: PublicKeyCredentialJSON,
+    updatedBy?: string,
+  ): AsyncResult {
     const kv = await Db.kv();
+    const credentialKey = [
+      "users",
+      userId,
+      "credentials",
+      credential.id,
+    ];
+    const credentialLookupKey = [
+      "credentials",
+      credential.id,
+    ];
 
-    const userRecords = await Array.fromAsync(
-      kv.list({ prefix: ["users", userId] }),
-    );
-    const userProfile = userRecords.find((record) =>
-      record.key.at(-1) === "profile"
-    )?.value as Profile | undefined;
+    const now = Dates.getNowIso();
+    const credentialEntity: Credential = {
+      credential,
+      createdBy: updatedBy ?? userId,
+      updatedBy: updatedBy ?? userId,
+      createdOn: now,
+      updatedOn: now,
+    };
 
-    if (!userProfile) {
-      const errors = [];
-      !userProfile && errors.push(`No profile found for '${userId}'`);
-      return { ok: false, errors };
+    const createCredentialResponse = await kv.atomic()
+      .check({ key: credentialKey, versionstamp: null })
+      .check({ key: credentialLookupKey, versionstamp: null })
+      .set(credentialKey, credentialEntity)
+      .set(credentialLookupKey, userId)
+      .commit();
+
+    if (!createCredentialResponse.ok) {
+      return Errors.make("Failed to create Credential. Try again.");
     }
 
-    return { ok: true, profile: userProfile };
+    return { ok: true };
   }
 
-  static async updateUserProfileGroupme(
+  static async getCredential(
+    credentialId: string,
+  ): AsyncResult<{ credential: PublicKeyCredentialJSON }> {
+    const kv = await Db.kv();
+    const credentialLookupKey = [
+      "credentials",
+      credentialId,
+    ];
+    const { value: userId } = await kv.get<string>(
+      credentialLookupKey,
+    );
+    if (!userId) {
+      return Errors.make(
+        `Failed to find user associated with credential id '${credentialId}'`,
+      );
+    }
+
+    const credentialKey = [
+      "users",
+      userId,
+      "credentials",
+      credentialId,
+    ];
+
+    const { value: credential } = await kv.get<PublicKeyCredentialJSON>(
+      credentialKey,
+    );
+
+    if (!credential) {
+      return Errors.make(`Failed to find credential with id '${credentialId}'`);
+    }
+
+    return { ok: true, credential };
+  }
+
+  static async getProfile(
     userId: string,
-    groupme: GroupmeIntegration,
-  ): AsyncResult<{ profile: Profile }> {
+  ): AsyncResult<{ profile: Profile; entityKey: Deno.KvKey }> {
     const kv = await Db.kv();
     const profileKey = [
       "users",
@@ -62,19 +116,32 @@ export class Users {
       "profile",
     ];
 
-    const { value: userProfile } = await kv.get<Profile>(profileKey);
+    const { value: userProfile, key } = await kv.get<Profile>(profileKey);
+
     if (!userProfile) {
-      return Errors.make(`User 'profile' record did not exist for '${userId}'`);
+      return Errors.make(`No profile found for '${userId}'`);
     }
 
+    return { ok: true, profile: userProfile, entityKey: key };
+  }
+
+  static async updateProfileGroupme(
+    userId: string,
+    groupme: GroupmeIntegration,
+  ): AsyncResult<{ profile: Profile }> {
+    const kv = await Db.kv();
+    const profileResult = await Users.getProfile(userId);
+    if (!profileResult.ok) return profileResult;
+    const { profile, entityKey } = profileResult;
+
     const newProfile: Profile = {
-      ...userProfile,
+      ...profile,
       groupme,
       updatedBy: "system",
       updatedOn: Dates.getNowIso(),
     };
 
-    const profileUpdate = await kv.set(profileKey, newProfile);
+    const profileUpdate = await kv.set(entityKey, newProfile);
     if (!profileUpdate.ok) {
       return Errors.make("Failed to update user 'profile' record");
     }
@@ -82,7 +149,7 @@ export class Users {
     return { ok: true, profile: newProfile };
   }
 
-  static async deleteUser(
+  static async delete(
     userId: string,
   ): AsyncResult<{ deletedRecords: unknown[] }> {
     const kv = await Db.kv();

@@ -123,7 +123,7 @@ export async function createLoginToken(
 ): AsyncResult<{ token: string }> {
   const kv = await Db.kv();
 
-  const userResult = await Users.getUserProfile(userId);
+  const userResult = await Users.getProfile(userId);
   if (!userResult.ok) {
     return userResult;
   }
@@ -141,10 +141,7 @@ export async function createLoginToken(
     .commit();
 
   if (!createTokenResponse.ok) {
-    return {
-      ok: false,
-      errors: ["Failed to create Token. Try again."],
-    };
+    return Errors.make("Failed to create Token. Try again.");
   }
 
   return { ok: true, token: prefillToken };
@@ -256,7 +253,7 @@ export async function groupmeLogin(
   }
 
   // update existing user with groupme integration
-  Users.updateUserProfileGroupme(userId, {
+  Users.updateProfileGroupme(userId, {
     id: groupmeInfo.id,
     accessToken: groupmeAccessToken,
     info: groupmeInfo,

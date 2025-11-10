@@ -22,7 +22,7 @@ export const handler = define.handlers({
     }
     const { userId } = tokenResult;
 
-    const result = await Users.getUserProfile(userId);
+    const result = await Users.getProfile(userId);
     if (!result.ok) {
       updateErrors(state, result.errors);
       return page();

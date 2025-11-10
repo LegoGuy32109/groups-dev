@@ -54,7 +54,7 @@ export const handler = define.handlers({
         );
       }
 
-      const result = await Users.deleteUser(params.id);
+      const result = await Users.delete(params.id);
       if (!result.ok) {
         return makeJsonResponse({ errors: result.errors }, 404);
       }

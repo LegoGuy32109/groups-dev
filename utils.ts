@@ -45,3 +45,11 @@ export function makeJsonResponse(
     },
   });
 }
+
+export function makeErrorResponse(
+  error: string | ErrorList,
+  status = 400,
+): Response {
+  const errors = Array.isArray(error) ? error : [error];
+  return makeJsonResponse({ errors }, status);
+}

@@ -81,21 +81,11 @@ export default function SetupBioAuth(
   }
 
   async function handleLogin() {
-    const response = await fetch("/api/auth/registerCredential", {
-      method: "POST",
-    });
-    const { publicKey, errors } = await response.json();
-    if (errors) {
-      console.error(errors);
-      return;
-    }
-
-    // convert base64url to ArrayBuffer for binary parameters
-    publicKey.challenge = base64urlToUint8Array(publicKey.challenge).buffer;
-    publicKey.user.id = base64urlToUint8Array(publicKey.user.id).buffer;
-
-    const assertion = await navigator.credentials.get({ publicKey });
+    const assertion = await navigator.credentials.get();
     console.log(assertion);
+    // const response = await fetch("/api/auth/registerCredential", {
+    //   method: "POST",
+    // });
   }
 
   return (

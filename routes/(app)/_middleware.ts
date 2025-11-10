@@ -26,7 +26,7 @@ export const handler = define.middleware(async (ctx) => {
   if (sessionId) {
     const sessionResult = await Sessions.getSession(sessionId);
     if (sessionResult.ok) {
-      const profileResult = await Users.getUserProfile(
+      const profileResult = await Users.getProfile(
         sessionResult.session.userId,
       );
       if (profileResult.ok) {
