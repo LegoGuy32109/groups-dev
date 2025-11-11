@@ -1,10 +1,10 @@
 import { Cookie, deleteCookie, getCookies, setCookie } from "@std/http";
 
 export class Cookies {
-  static Error = "e91-students-error";
-  static Auth = "e91-students-auth";
-  static Groupme = "e91-students-groupme"; // groupme access token
-  static Token = "e91-students-token"; // userId to assign to groupme account
+  static Error = "groups-error";
+  static Auth = "groups-auth";
+  static Groupme = "groups-groupme"; // groupme access token
+  static Token = "groups-token"; // userId to assign to groupme account
 
   static clear(headers: Headers, cookieName: string | Array<string>) {
     const cookieNames = Array.isArray(cookieName) ? cookieName : [cookieName];

@@ -73,7 +73,7 @@ export class Users {
 
   static async getCredential(
     credentialId: string,
-  ): AsyncResult<{ credential: PublicKeyCredentialJSON }> {
+  ): AsyncResult<{ credential: PublicKeyCredentialJSON; userId: string }> {
     const kv = await Db.kv();
     const credentialLookupKey = [
       "credentials",
@@ -103,7 +103,7 @@ export class Users {
       return Errors.make(`Failed to find credential with id '${credentialId}'`);
     }
 
-    return { ok: true, credential };
+    return { ok: true, credential, userId };
   }
 
   static async getProfile(

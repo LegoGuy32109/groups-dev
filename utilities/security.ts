@@ -260,23 +260,5 @@ export async function groupmeLogin(
   });
 
   // create a new session, it's id will be the auth cookie
-  const newSessionId = crypto.randomUUID();
-  const nowIso = Dates.getNowIso();
-  const newSessionRecord: Session = {
-    userId,
-    createdOn: nowIso,
-    updatedOn: nowIso,
-    createdBy: "system",
-    updatedBy: "system",
-    userAgent: options?.userAgent,
-  };
-  const addSessionResult = await Sessions.addNewSession(
-    newSessionId,
-    newSessionRecord,
-  );
-  if (!addSessionResult.ok) {
-    return addSessionResult;
-  }
-  // return cookie for response in other function
-  return { ok: true, sessionId: newSessionId };
+  return await Sessions.login(userId, options);
 }

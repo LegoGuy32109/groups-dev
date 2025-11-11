@@ -1,14 +1,46 @@
+import { UserAgent } from "@std/http/user-agent";
 import { Session } from "../types/entities/Session.ts";
 import { Db } from "../utilities/Database.ts";
+import { Dates } from "../utilities/Dates.ts";
 import { AsyncResult, Errors } from "../utilities/Errors.ts";
 
 export class Sessions {
+  /**
+   * Create a session for a user
+   */
+  public static async login(
+    userId: string,
+    options?: { userAgent?: UserAgent },
+  ): AsyncResult<{ sessionId: string }> {
+    const newSessionId = crypto.randomUUID();
+    const nowIso = Dates.getNowIso();
+    const newSessionRecord: Session = {
+      userId,
+      createdOn: nowIso,
+      updatedOn: nowIso,
+      createdBy: "system",
+      updatedBy: "system",
+      userAgent: options?.userAgent,
+    };
+    const addSessionResult = await Sessions.addNewSession(
+      newSessionId,
+      newSessionRecord,
+    );
+    if (!addSessionResult.ok) {
+      return addSessionResult;
+    }
+    return { ok: true, sessionId: newSessionId };
+  }
+
   /**
    * Add user login session to the database
    * 1) [users, userId, sessions] => array of sessionIds
    * 2) [sessions, sessionId] => Session
    */
-  static async addNewSession(sessionId: string, session: Session): AsyncResult {
+  private static async addNewSession(
+    sessionId: string,
+    session: Session,
+  ): AsyncResult {
     const kv = await Db.kv();
 
     const { userId } = session;

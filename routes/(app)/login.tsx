@@ -45,7 +45,7 @@ export const handler = define.handlers({
 const GROUPME_AUTH_REDIRECT_URL = Deno.env.get("GROUPME_AUTH_REDIRECT_URL");
 
 export default define.page<typeof handler>(
-  ({ state, data, url }) => {
+  ({ state, data }) => {
     // if already logged in, prevent UI to login again
     if (state.session && state.profile) {
       return (
@@ -55,8 +55,6 @@ export default define.page<typeof handler>(
             <a href="/api/logout" class="font-bold text-red-300">Logout?</a>
           </h1>
           <SetupBioAuth
-            hostname={url.hostname}
-            profile={state.profile}
             userId={state.session.userId}
           />
         </>
@@ -117,6 +115,7 @@ export default define.page<typeof handler>(
             </form>
           </div>
         </div>
+        <SetupBioAuth userId={state.session?.userId} />
         <p class="text-red-400 mt-2 font-mono">
           {JSON.stringify(state.errors?.[0])}
         </p>
