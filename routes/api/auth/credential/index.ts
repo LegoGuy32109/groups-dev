@@ -84,15 +84,16 @@ export const handler = define.handlers({
 
     // if no sessionId, they're logging in so parse assertion
     if (!sessionId) {
-      console.log("here");
       const request = await ctx.req.json();
       console.log(request);
       const { assertion } = request ?? {};
+      console.log("assertion", assertion);
       if (!assertion?.id) {
         return makeErrorResponse("Failed to parse assertion");
       }
 
       const getCredentialResult = await Users.getCredential(assertion.id);
+      console.log("getCredentialResult", getCredentialResult);
       if (!getCredentialResult.ok) {
         return makeErrorResponse(getCredentialResult.errors, 401);
       }
