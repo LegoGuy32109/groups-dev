@@ -95,7 +95,10 @@ export default function SetupBioAuth({ userId }: { userId?: string }) {
       return;
     }
 
-    // TODO: redirect with session id in cookie
+    const redirectUrl = loginResponse.redirected
+      ? loginResponse.url
+      : loginResponse.headers.get("location") ?? "/";
+    globalThis.location.assign(redirectUrl);
 
     setButtonState("disabled");
   }

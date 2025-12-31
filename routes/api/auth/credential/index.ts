@@ -85,15 +85,12 @@ export const handler = define.handlers({
     // if no sessionId, they're logging in so parse assertion
     if (!sessionId) {
       const request = await ctx.req.json();
-      console.log(request);
       const { assertion } = request ?? {};
-      console.log("assertion", assertion);
       if (!assertion?.id) {
         return makeErrorResponse("Failed to parse assertion");
       }
 
       const getCredentialResult = await Users.getCredential(assertion.id);
-      console.log("getCredentialResult", getCredentialResult);
       if (!getCredentialResult.ok) {
         return makeErrorResponse(getCredentialResult.errors, 401);
       }
@@ -119,11 +116,11 @@ export const handler = define.handlers({
       return makeRedirectResponse(headers, "/");
     }
 
+    // other wise, we are trying to assign this credential to the user logged in
     const noSessionResponse = makeErrorResponse(
       "Failed to retrieve current session.",
       401,
     );
-    if (!sessionId) return noSessionResponse;
     const sessionResult = await Sessions.getSession(sessionId);
     if (!sessionResult.ok) return noSessionResponse;
     const { session: { userId } } = sessionResult;

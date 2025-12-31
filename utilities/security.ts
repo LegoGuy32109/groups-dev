@@ -1,6 +1,5 @@
 import { UserAgent } from "@std/http";
 import { Profile } from "../types/entities/Profile.ts";
-import { Session } from "../types/entities/Session.ts";
 import { Db } from "./Database.ts";
 import { Dates } from "./Dates.ts";
 import { AsyncResult, Errors } from "./Errors.ts";
