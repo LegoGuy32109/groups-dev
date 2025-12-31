@@ -32,12 +32,12 @@ export class Db {
    *
    * Note: see `Db.configure()`
    */
-  static async kv(): Promise<Deno.Kv> {
+  static async kv(path?: string): Promise<Deno.Kv> {
     if (Db._kv) {
       return Db._kv;
     }
     // if it wasn't already configured, give default
-    return await Deno.openKv();
+    return await Deno.openKv(path);
   }
 
   static async getGroupmeIds() {
