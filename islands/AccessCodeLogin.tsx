@@ -25,9 +25,9 @@ export default function AccessCodeLogin() {
       response = await fetch("/api/auth/accessCode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
         body: JSON.stringify({ accessCode: code }),
       });
+      // FIX: I don't know what this is but I hate that it crashes here
     } catch (err) {
       console.error(err);
       redirectWithError(JSON.stringify(err));
