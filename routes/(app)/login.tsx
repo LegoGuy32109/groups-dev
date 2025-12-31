@@ -1,18 +1,20 @@
 import { page } from "fresh";
 import { define, updateErrors } from "../../utils.ts";
 import { Db } from "../../utilities/Database.ts";
-import { Cookies } from "../../utilities/Cookies.ts";
 import { Users } from "../../data/Users.ts";
-import { Sessions } from "../../data/Sessions.ts";
 import Conditional from "../../components/Conditional.tsx";
 import SetupBioAuth from "../../islands/SetupBioAuth.tsx";
-import { UserAgent } from "@std/http/user-agent";
-import { makeRedirectResponse } from "../../utils.ts";
+import AccessCodeLogin from "../../islands/AccessCodeLogin.tsx";
+import { Cookies } from "../../utilities/Cookies.ts";
 
 export const handler = define.handlers({
   async GET({ req, state }) {
     // check if token exists for first time sign-in
     const url = new URL(req.url);
+    const errorMessage = url.searchParams.get("error");
+    if (errorMessage) {
+      updateErrors(state, errorMessage);
+    }
     const possibleToken = url.searchParams.get("token");
     if (!possibleToken) return page(); // skip if it doesn't
 
@@ -42,43 +44,6 @@ export const handler = define.handlers({
       },
     });
     return response;
-  },
-  async POST({ req, state }) {
-    const form = await req.formData();
-    console.log("got form data");
-    const possibleToken = String(form.get("accessCode") ?? "").trim();
-    if (!possibleToken) {
-      updateErrors(state, "Missing access code.");
-      return page();
-    }
-
-    const tokenResult = await Db.consumeToken(possibleToken);
-    console.log("consumed token");
-    if (!tokenResult.ok) {
-      updateErrors(state, tokenResult.errors);
-      return page();
-    }
-
-    const { userId } = tokenResult;
-    const sessionResult = await Sessions.login(userId, {
-      userAgent: new UserAgent(req.headers.get("user-agent")),
-    });
-    console.log("logging in");
-    if (!sessionResult.ok) {
-      updateErrors(state, sessionResult.errors);
-      return page();
-    }
-
-    console.log("setting cookied");
-    const headers = Cookies.set({
-      headers: new Headers(req.headers),
-      cookie: {
-        name: Cookies.Auth,
-        value: sessionResult.sessionId,
-        maxAge: 14 * 24 * 3600,
-      },
-    });
-    return makeRedirectResponse(headers, "/");
   },
 });
 
@@ -138,22 +103,7 @@ export default define.page<typeof handler>(
             </p>
           </Conditional>
           <div class="bg-slate-400 text-slate-800 rounded-md mt-4 p-2">
-            <form method="post">
-              <label>
-                I have an access code:{" "}
-                <input
-                  class="ml-1 mr-4 px-1 bg-slate-100 rounded-md w-20"
-                  name="accessCode"
-                  type="text"
-                />
-              </label>
-              <button
-                class="bg-slate-600 rounded-full text-slate-200 font-bold px-3 py-1 text-sm"
-                type="submit"
-              >
-                Submit
-              </button>
-            </form>
+            <AccessCodeLogin />
           </div>
         </div>
         <SetupBioAuth userId={state.session?.userId} />
