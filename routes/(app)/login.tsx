@@ -3,8 +3,11 @@ import { define, updateErrors } from "../../utils.ts";
 import { Db } from "../../utilities/Database.ts";
 import { Cookies } from "../../utilities/Cookies.ts";
 import { Users } from "../../data/Users.ts";
+import { Sessions } from "../../data/Sessions.ts";
 import Conditional from "../../components/Conditional.tsx";
 import SetupBioAuth from "../../islands/SetupBioAuth.tsx";
+import { UserAgent } from "@std/http/user-agent";
+import { makeRedirectResponse } from "../../utils.ts";
 
 export const handler = define.handlers({
   async GET({ req, state }) {
@@ -14,7 +17,7 @@ export const handler = define.handlers({
     if (!possibleToken) return page(); // skip if it doesn't
 
     // token exists, attempt to grab from db
-    const tokenResult = await Db.getTokenValue(possibleToken);
+    const tokenResult = await Db.getTokenEntry(possibleToken);
     // couldn't grab token from db
     if (!tokenResult.ok) {
       updateErrors(state, tokenResult.errors);
@@ -39,6 +42,39 @@ export const handler = define.handlers({
       },
     });
     return response;
+  },
+  async POST({ req, state }) {
+    const form = await req.formData();
+    const possibleToken = String(form.get("accessCode") ?? "").trim();
+    if (!possibleToken) {
+      updateErrors(state, "Missing access code.");
+      return page();
+    }
+
+    const tokenResult = await Db.consumeToken(possibleToken);
+    if (!tokenResult.ok) {
+      updateErrors(state, tokenResult.errors);
+      return page();
+    }
+
+    const { userId } = tokenResult;
+    const sessionResult = await Sessions.login(userId, {
+      userAgent: new UserAgent(req.headers.get("user-agent")),
+    });
+    if (!sessionResult.ok) {
+      updateErrors(state, sessionResult.errors);
+      return page();
+    }
+
+    const headers = Cookies.set({
+      headers: new Headers(req.headers),
+      cookie: {
+        name: Cookies.Auth,
+        value: sessionResult.sessionId,
+        maxAge: 14 * 24 * 3600,
+      },
+    });
+    return makeRedirectResponse(headers, "/");
   },
 });
 
@@ -98,11 +134,12 @@ export default define.page<typeof handler>(
             </p>
           </Conditional>
           <div class="bg-slate-400 text-slate-800 rounded-md mt-4 p-2">
-            <form>
+            <form method="post">
               <label>
                 I have an access code:{" "}
                 <input
                   class="ml-1 mr-4 px-1 bg-slate-100 rounded-md w-20"
+                  name="accessCode"
                   type="text"
                 />
               </label>

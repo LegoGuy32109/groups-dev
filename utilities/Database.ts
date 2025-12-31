@@ -133,16 +133,29 @@ export class Db {
     return { ok: true };
   }
 
-  static async getTokenValue(
+  static async getTokenEntry(
     possibleToken: string,
-  ): AsyncResult<{ userId: string }> {
+  ): AsyncResult<{ key: Array<string>; userId: string }> {
     const kv = await Db.kv();
-    const tokenResult = await kv.get<
-      { userId: string }
-    >(["tokens", possibleToken]);
-    if (!tokenResult.value) {
+    const potentialKey = ["tokens", possibleToken];
+    const tokenResult = await kv.get<{ userId: string }>(potentialKey);
+
+    if (tokenResult.value) {
+      return { ok: true, userId: tokenResult.value.userId, key: potentialKey };
+    }
+
+    return Errors.make("Invalid Token");
+  }
+
+  static async consumeToken(
+    possibleToken: string,
+  ): AsyncResult<{ deleted: boolean; userId: string }> {
+    const kv = await Db.kv();
+    const result = await Db.getTokenEntry(possibleToken);
+    if (!result.ok) {
       return Errors.make(`Token '${possibleToken}' is Invalid or Expired.`);
     }
-    return { ok: true, userId: tokenResult.value.userId };
+    await kv.delete(result.key);
+    return { ok: true, deleted: true, userId: result.userId };
   }
 }
