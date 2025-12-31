@@ -30,7 +30,7 @@ export default function AccessCodeLogin() {
       });
     } catch (err) {
       console.error(err);
-      redirectWithError("Failed to reach the server.");
+      redirectWithError(JSON.stringify(err));
       submitting.value = false;
       return;
     }
