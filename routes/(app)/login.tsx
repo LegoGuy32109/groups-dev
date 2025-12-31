@@ -45,6 +45,7 @@ export const handler = define.handlers({
   },
   async POST({ req, state }) {
     const form = await req.formData();
+    console.log("got form data");
     const possibleToken = String(form.get("accessCode") ?? "").trim();
     if (!possibleToken) {
       updateErrors(state, "Missing access code.");
@@ -52,6 +53,7 @@ export const handler = define.handlers({
     }
 
     const tokenResult = await Db.consumeToken(possibleToken);
+    console.log("consumed token");
     if (!tokenResult.ok) {
       updateErrors(state, tokenResult.errors);
       return page();
@@ -61,11 +63,13 @@ export const handler = define.handlers({
     const sessionResult = await Sessions.login(userId, {
       userAgent: new UserAgent(req.headers.get("user-agent")),
     });
+    console.log("logging in");
     if (!sessionResult.ok) {
       updateErrors(state, sessionResult.errors);
       return page();
     }
 
+    console.log("setting cookied");
     const headers = Cookies.set({
       headers: new Headers(req.headers),
       cookie: {
