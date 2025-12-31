@@ -21,7 +21,7 @@ export default function DeleteUserButton(
       method: "DELETE",
     });
     const response = await deleteResponse.json();
-    if (response.errors) {
+    if (response.errors.length > 0) {
       console.error(response.errors);
     } else {
       globalThis.location.reload();

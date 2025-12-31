@@ -84,7 +84,9 @@ export const handler = define.middleware(async (ctx) => {
       return makeRedirectResponse(headers, "/");
     }
   }
-  console.error("Errors:", state.errors);
+  if (state.errors.length > 0) {
+    console.error("Errors:", state.errors);
+  }
 
   // clear errors in error cookie if there are any
   const response = await ctx.next();
