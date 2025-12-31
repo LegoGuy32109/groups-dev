@@ -57,66 +57,6 @@ export async function getPbkdf2Hash(
   return new Uint8Array(derivedBits);
 }
 
-// export async function login(
-//   username: string,
-//   password: string,
-//   userAgent?: UserAgent,
-// ): AsyncResult<{ sessionId: string }> {
-//   // find user id from username
-//   const userIdResult = await Db.getUserIdFromUsername(username);
-//   if (!userIdResult.ok) {
-//     return userIdResult;
-//   }
-//   const { userId } = userIdResult;
-//   // find auth from user id
-//   const userResult = await Db.getUserProfile(userId);
-//   if (!userResult.ok) {
-//     return userResult;
-//   }
-//   const { authentication } = userResult;
-//   // hash password with salt from auth record
-//   const { saltB64, hashB64 } = authentication;
-//   const correctPasswordHash = fromBase64(hashB64);
-//   const givenPasswordHash = await getPbkdf2Hash(password, fromBase64(saltB64));
-//   // compare given password hash with hash in auth record
-//   const isCorrectPassword = timingSafeEqual(
-//     correctPasswordHash,
-//     givenPasswordHash,
-//   );
-//   if (!isCorrectPassword) {
-//     return {
-//       ok: false,
-//       errors: [`incorrect password for user '${username}'`],
-//     };
-//   }
-//   // if hashes match create a new session, it's id will be the auth cookie
-//   const newSessionId = crypto.randomUUID();
-//   const nowIso = Dates.getNowIso();
-//   const newSessionRecord: Session = {
-//     userId,
-//     createdOn: nowIso,
-//     updatedOn: nowIso,
-//     createdBy: "system",
-//     updatedBy: "system",
-//     userAgent,
-//   };
-//   const addSessionResult = await Db.addNewSession(
-//     newSessionId,
-//     newSessionRecord,
-//   );
-//   if (!addSessionResult.ok) {
-//     return addSessionResult;
-//   }
-//   // return cookie for response in other function
-//   return { ok: true, sessionId: newSessionId };
-// }
-//
-// export async function logout(
-//   sessionId: string,
-// ): AsyncResult<{ deletedSession: Session; userSessionIds: Array<string> }> {
-//   return await Db.removeSession(sessionId);
-// }
-
 export async function createLoginToken(
   userId: string,
 ): AsyncResult<{ token: string }> {
@@ -152,26 +92,8 @@ export async function signup(
   defaultGroup?: string,
 ): AsyncResult<{ userId: string; token: string }> {
   const kv = await Db.kv();
-
   const newUserId = crypto.randomUUID();
-
-  // generate 16 bits of salt
-  // const salt = crypto.getRandomValues(new Uint8Array(16));
-  //
-  // const derivedKey = await getPbkdf2Hash(password, salt);
-  //
   const nowIso = Dates.getNowIso();
-
-  // const userAuthRecord: Authentication = {
-  //   algo: "PBKDF2-SHA256",
-  //   iterations: HASHING_ITERATIONS,
-  //   saltB64: toBase64(salt),
-  //   hashB64: toBase64(derivedKey),
-  //   createdOn: nowIso,
-  //   createdBy: "",
-  //   updatedOn: "",
-  //   updatedBy: "",
-  // };
 
   const userProfileRecord: Profile = {
     firstName,
@@ -183,7 +105,6 @@ export async function signup(
     updatedBy: "system",
   };
 
-  // const userAuthKey = ["users", newUserId, "auth"];
   const userProfileKey = ["users", newUserId, "profile"];
 
   const prefillToken = crypto.randomUUID();
