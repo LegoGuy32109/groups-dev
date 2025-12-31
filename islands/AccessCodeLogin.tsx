@@ -28,7 +28,8 @@ export default function AccessCodeLogin() {
         credentials: "same-origin",
         body: JSON.stringify({ accessCode: code }),
       });
-    } catch {
+    } catch (err) {
+      console.error(err);
       redirectWithError("Failed to reach the server.");
       submitting.value = false;
       return;
