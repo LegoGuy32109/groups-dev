@@ -53,5 +53,5 @@
     ],
     "types": ["vite/client"]
   },
-  "deploy": { "org": "legoguy32109", "app": "tutorial-with-fresh" }
+  "deploy": { "org": "legoguy32109", "app": "groups-dev" }
 }
